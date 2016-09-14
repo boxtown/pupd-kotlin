@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/api/api.iml" filepath="$PROJECT_DIR$/.idea/modules/services/api/api.iml" group="services/api" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/api/api_main.iml" filepath="$PROJECT_DIR$/.idea/modules/services/api/api_main.iml" group="services/api" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/api/api_test.iml" filepath="$PROJECT_DIR$/.idea/modules/services/api/api_test.iml" group="services/api" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend.iml" filepath="$PROJECT_DIR$/.idea/modules/backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend_main.iml" filepath="$PROJECT_DIR$/.idea/modules/backend_main.iml" group="backend" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/backend_test.iml" filepath="$PROJECT_DIR$/.idea/modules/backend_test.iml" group="backend" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/data.iml" filepath="$PROJECT_DIR$/.idea/modules/data/data.iml" group="data" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/data_main.iml" filepath="$PROJECT_DIR$/.idea/modules/data/data_main.iml" group="data" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/data/data_test.iml" filepath="$PROJECT_DIR$/.idea/modules/data/data_test.iml" group="data" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/services.iml" filepath="$PROJECT_DIR$/.idea/modules/services/services.iml" group="services" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/services_main.iml" filepath="$PROJECT_DIR$/.idea/modules/services/services_main.iml" group="services" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/services_test.iml" filepath="$PROJECT_DIR$/.idea/modules/services/services_test.iml" group="services" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/shared/shared.iml" filepath="$PROJECT_DIR$/.idea/modules/services/shared/shared.iml" group="services/shared" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/shared/shared_main.iml" filepath="$PROJECT_DIR$/.idea/modules/services/shared/shared_main.iml" group="services/shared" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/services/shared/shared_test.iml" filepath="$PROJECT_DIR$/.idea/modules/services/shared/shared_test.iml" group="services/shared" />
+    </modules>
+  </component>
+</project>

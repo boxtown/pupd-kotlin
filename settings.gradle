@@ -1,0 +1,6 @@
+rootProject.name = 'backend'
+include 'data'
+include 'services'
+include 'services:api'
+include 'services:shared'
+

@@ -1,0 +1,6 @@
+group 'com.pupd'
+version '1.0-SNAPSHOT'
+
+dependencies {
+    compile 'io.vertx:vertx-core:3.2.1'
+}

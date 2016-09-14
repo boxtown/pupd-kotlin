@@ -1,0 +1,64 @@
+import org.jooq.util.GenerationTool
+import org.jooq.util.jaxb.Database
+import org.jooq.util.jaxb.Generator
+import org.jooq.util.jaxb.Jdbc
+import org.jooq.util.jaxb.Target
+
+group 'com.pupd'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.0.3'
+
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+
+        // jOOQ generator task dependencies
+        classpath 'org.jooq:jooq-meta:3.8.4'
+        classpath 'org.jooq:jooq-codegen:3.8.4'
+        classpath 'org.postgresql:postgresql:9.4.1209'
+    }
+}
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'kotlin'
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+        compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+        compile 'com.google.inject:guice:4.1.0'
+        testCompile group: 'junit', name: 'junit', version: '4.11'
+    }
+}
+
+task generate << {
+    def config = new org.jooq.util.jaxb.Configuration()
+            .withJdbc(new Jdbc()
+                .withDriver('org.postgresql.Driver')
+                .withUrl('jdbc:postgresql:pupddb')
+                .withUser('tester')
+                .withPassword('test'))
+            .withGenerator(new Generator()
+                .withDatabase(new Database()
+                .withName('org.jooq.util.postgres.PostgresDatabase')
+                .withIncludes('.*')
+                .withExcludes('')
+                .withInputSchema('public'))
+            .withTarget(new Target()
+                .withPackageName('com.pupd.backend.data.generated')
+                .withDirectory('src/main/java/com/pupd/backend/data/generated')))
+    GenerationTool.generate(config)
+}
+

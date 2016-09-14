@@ -1,0 +1,27 @@
+group 'com.pupd'
+version '1.0-SNAPSHOT'
+
+// apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+dependencies {
+    compile 'io.vertx:vertx-web:3.2.1'
+    compile 'io.vertx:vertx-unit:3.0.0'
+    compile 'com.h2database:h2:1.4.192'
+    compile project(':data')
+    compile project(':services:shared')
+}
+
+/* run {
+    main = 'io.vertx.core.Launcher'
+    args = ['run', 'com.pupd.backend.api.ApiVerticle']
+} */
+
+jar {
+    manifest {
+        attributes(
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'io.vertx.core.Launcher',
+                'Main-Verticle': 'com.pupd.backend.api.ApiVerticle')
+    }
+}
