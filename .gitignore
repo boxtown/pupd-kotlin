@@ -1,5 +1,5 @@
 # Ignore gradle
-.gradle/
+.gradle/*
 /build/
 
 # Ignore Gradle GUI config
@@ -12,6 +12,6 @@ gradle-app.setting
 .gradletasknamecache
 
 # Ignore IntelliJ
-.idea/
+.idea/*
 /out/
 
