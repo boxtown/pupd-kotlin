@@ -92,6 +92,7 @@ class ExerciseResourceTest {
                 ctx.assertEquals(resp.statusCode(), 200)
                 resp.bodyHandler { body ->
                     val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 3)
                     ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise A")
                     ctx.assertEquals(array.getJsonObject(2).getString("name"), "Test Exercise B")
                     async1.complete()
@@ -100,13 +101,96 @@ class ExerciseResourceTest {
         }
 
         // test offset
+        val async2 = ctx.async()
+        client.doRequest(HttpMethod.GET) {
+            uri {
+                path("exercises")
+                query("offset" to 1)
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 200)
+                resp.bodyHandler { body ->
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 2)
+                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise C")
+                    async2.complete()
+                }
+            }
+        }
 
         // test limit
+        val async3 = ctx.async()
+        client.doRequest(HttpMethod.GET) {
+            uri {
+                path("exercises")
+                query("limit" to 1)
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 200)
+                resp.bodyHandler { body ->
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 1)
+                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise A")
+                    async3.complete()
+                }
+            }
+        }
 
         // test sort by
+        val async4 = ctx.async()
+        client.doRequest(HttpMethod.GET) {
+            uri {
+                path("exercises")
+                query("sort" to "name")
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 200)
+                resp.bodyHandler { body ->
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 3)
+                    ctx.assertEquals(array.getJsonObject(1).getString("name"), "Test Exercise B")
+                    async4.complete()
+                }
+            }
+        }
 
         // test desc
+        val async5 = ctx.async()
+        client.doRequest(HttpMethod.GET) {
+            uri {
+                path("exercises")
+                query("desc" to "true")
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 200)
+                resp.bodyHandler { body ->
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 3)
+                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise B")
+                    async5.complete()
+                }
+            }
+        }
 
         // test combo
+        val async6 = ctx.async()
+        client.doRequest(HttpMethod.GET) {
+            uri {
+                path("exercises")
+                query("sort" to "name")
+                query("desc" to "true")
+                query("offset" to 1)
+                query("limit" to 1)
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 200)
+                resp.bodyHandler { body ->
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 1)
+                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise B")
+                    async6.complete()
+                }
+            }
+        }
     }
 }
