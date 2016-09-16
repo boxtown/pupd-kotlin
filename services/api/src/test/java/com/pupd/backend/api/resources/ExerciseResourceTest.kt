@@ -283,7 +283,7 @@ class ExerciseResourceTest {
                 ctx.assertEquals(resp.statusCode(), 202)
                 async.complete()
             }
-        }.thenRun {
+        }.thenCompose {
             async = ctx.async()
             client.doRequest<Unit>(HttpMethod.GET) {
                 uri {
@@ -293,17 +293,13 @@ class ExerciseResourceTest {
                 handler { resp ->
                     ctx.assertEquals(resp.statusCode(), 200)
                     resp.bodyHandler { body ->
-                        try {
-                            val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
-                            ctx.assertEquals(exercise?.name, "Updated Exercise")
-                            async.complete()
-                        } catch (e: Exception) {
-                            ctx.fail(e)
-                        }
+                        val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
+                        ctx.assertEquals(exercise?.name, "Updated Exercise")
+                        async.complete()
                     }
                 }
             }
-        }
+        }.exceptionally { e -> ctx.fail(e) }
     }
 
     @Test

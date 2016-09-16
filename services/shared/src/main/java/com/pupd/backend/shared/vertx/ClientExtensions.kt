@@ -19,7 +19,11 @@ fun <T> HttpClient.doRequest(method: HttpMethod, cfg: RequestBuilder<T>.() -> Un
 
     val promise = CompletableFuture<T>()
     val handler: (HttpClientResponse) -> Unit = { resp ->
-        promise.complete(builder.handler(resp))
+        try {
+            promise.complete(builder.handler(resp))
+        } catch (e: Exception) {
+            promise.completeExceptionally(e)
+        }
     }
     val req = when (method) {
         HttpMethod.GET -> {
