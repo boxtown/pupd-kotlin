@@ -14,7 +14,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
 
 /**
  * Exercise Resource Test class
@@ -44,7 +43,7 @@ class ExerciseResourceTest {
     @Test
     fun testGetExercise(ctx: TestContext) {
         val async = ctx.async()
-        client.doRequest(HttpMethod.GET) {
+        client.doRequest<Unit>(HttpMethod.GET) {
             uri {
                 path("exercise")
                 path("00000000-0000-4000-8000-000000000001")
@@ -67,7 +66,7 @@ class ExerciseResourceTest {
     @Test
     fun testGetMissingExercise(ctx: TestContext) {
         val async = ctx.async()
-        client.doRequest(HttpMethod.GET) {
+        client.doRequest<Unit>(HttpMethod.GET) {
             uri {
                 path("exercise")
                 path("00000000-0000-4000-8000-000000000004")
@@ -83,7 +82,7 @@ class ExerciseResourceTest {
     fun testListExercises(ctx: TestContext) {
         // test default
         val async1 = ctx.async()
-        client.doRequest(HttpMethod.GET) {
+        client.doRequest<Unit>(HttpMethod.GET) {
             uri {
                 path("exercises")
             }
@@ -105,7 +104,7 @@ class ExerciseResourceTest {
 
         // test offset
         val async2 = ctx.async()
-        client.doRequest(HttpMethod.GET) {
+        client.doRequest<Unit>(HttpMethod.GET) {
             uri {
                 path("exercises")
                 query("offset" to 1)
@@ -127,7 +126,7 @@ class ExerciseResourceTest {
 
         // test limit
         val async3 = ctx.async()
-        client.doRequest(HttpMethod.GET) {
+        client.doRequest<Unit>(HttpMethod.GET) {
             uri {
                 path("exercises")
                 query("limit" to 1)
@@ -149,7 +148,7 @@ class ExerciseResourceTest {
 
         // test sort by
         val async4 = ctx.async()
-        client.doRequest(HttpMethod.GET) {
+        client.doRequest<Unit>(HttpMethod.GET) {
             uri {
                 path("exercises")
                 query("sort" to "name")
@@ -171,7 +170,7 @@ class ExerciseResourceTest {
 
         // test desc
         val async5 = ctx.async()
-        client.doRequest(HttpMethod.GET) {
+        client.doRequest<Unit>(HttpMethod.GET) {
             uri {
                 path("exercises")
                 query("desc" to "true")
@@ -193,7 +192,7 @@ class ExerciseResourceTest {
 
         // test combo
         val async6 = ctx.async()
-        client.doRequest(HttpMethod.GET) {
+        client.doRequest<Unit>(HttpMethod.GET) {
             uri {
                 path("exercises")
                 query("sort" to "name")
@@ -219,8 +218,8 @@ class ExerciseResourceTest {
 
     @Test
     fun testCreateExercise(ctx: TestContext) {
-        val async = ctx.async()
-        client.doRequest(HttpMethod.POST) {
+        var async = ctx.async()
+        client.doRequest<String>(HttpMethod.POST) {
             uri {
                 path("exercise")
             }
@@ -234,39 +233,113 @@ class ExerciseResourceTest {
                 ctx.assertEquals(resp.statusCode(), 201)
                 ctx.assertTrue(resp.headers()["location"].length > 0)
 
-                val id = resp.headers()["location"].substringAfterLast('/')
-                val async2 = ctx.async()
-                client.doRequest(HttpMethod.GET) {
-                    uri {
-                        path("exercise")
-                        path(id)
-                    }
-                    handler { resp ->
-                        ctx.assertEquals(resp.statusCode(), 200)
-                        resp.bodyHandler { body ->
-                            try {
-                                val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
-                                ctx.assertEquals(exercise?.name, "New Exercise")
-                                async2.complete()
-                            } catch (e: Exception) {
-                                ctx.fail(e)
-                            }
+                async.complete()
+                resp.headers()["location"].substringAfterLast('/')
+            }
+        }.thenAccept { id ->
+            async = ctx.async()
+            client.doRequest<Unit>(HttpMethod.GET) {
+                uri {
+                    path("exercise")
+                    path(id)
+                }
+                handler { resp ->
+                    ctx.assertEquals(resp.statusCode(), 200)
+                    resp.bodyHandler { body ->
+                        try {
+                            val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
+                            ctx.assertEquals(exercise?.name, "New Exercise")
+                            async.complete()
+                        } catch (e: Exception) {
+                            ctx.fail(e)
                         }
                     }
                 }
-                async.complete()
             }
         }
     }
 
     @Test
     fun testCreateBadExercise(ctx: TestContext) {
-        val client = vertx.createHttpClient()
+        // test no body
+        val async1 = ctx.async()
+        client.doRequest<Unit>(HttpMethod.POST) {
+            uri {
+                path("exercise")
+            }
+            headers {
+                put("content-type", "application/json")
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 400)
+                // TODO: check error code body
+                async1.complete()
+            }
+        }
+
+        // test bad name
+        val async2 = ctx.async()
+        client.doRequest<Unit>(HttpMethod.POST) {
+            uri {
+                path("exercise")
+            }
+            headers {
+                put("content-type", "application/json")
+            }
+            body {
+                appendString(Json.encode(Exercise()))
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 400)
+                // TODO: check error code body
+                async2.complete()
+            }
+        }
     }
 
     @Test
     fun testUpdateExercise(ctx: TestContext) {
+        var async = ctx.async()
+        client.doRequest<Unit>(HttpMethod.PUT) {
+            uri {
+                path("exercise")
+                path("00000000-0000-4000-8000-000000000001")
+            }
+            headers {
+                put("content-type", "application/json")
+            }
+            body {
+                appendString(Json.encode(Exercise(name = "Updated Exercise")))
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 202)
+                async.complete()
+            }
+        }.thenRun {
+            async = ctx.async()
+            client.doRequest<Unit>(HttpMethod.GET) {
+                uri {
+                    path("exercise")
+                    path("00000000-0000-4000-8000-000000000001")
+                }
+                handler { resp ->
+                    ctx.assertEquals(resp.statusCode(), 200)
+                    resp.bodyHandler { body ->
+                        try {
+                            val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
+                            ctx.assertEquals(exercise?.name, "Updated Exercise")
+                            async.complete()
+                        } catch (e: Exception) {
+                            ctx.fail(e)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
+    @Test
+    fun testUpdateBadExercise(ctx: TestContext) {
     }
 
     @Test

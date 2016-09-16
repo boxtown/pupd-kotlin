@@ -4,6 +4,7 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpClient
 import io.vertx.core.http.HttpClientResponse
 import io.vertx.core.http.HttpMethod
+import java.util.concurrent.CompletableFuture
 
 /**
  * Extension syntatic sugar function for performing requests on Vertx HttpClients
@@ -12,38 +13,41 @@ import io.vertx.core.http.HttpMethod
  * @param method HTTP method for request
  * @param cfg Request building logic
  */
-fun HttpClient.doRequest(method: HttpMethod, cfg: RequestBuilder.() -> Unit) {
-    val builder = RequestBuilder()
+fun <T> HttpClient.doRequest(method: HttpMethod, cfg: RequestBuilder<T>.() -> Unit): CompletableFuture<T> {
+    val builder = RequestBuilder<T>()
     builder.cfg()
-    when (method) {
-        HttpMethod.GET -> {
-            val req = this.get(builder.port, builder.host, builder.uri, builder.handler)
-            for ((k, v) in builder.headers) {
-                req.putHeader(k, v)
-            }
-            req.end()
-        }
-        HttpMethod.PUT, HttpMethod.POST -> {
-            val req = if (method == HttpMethod.PUT) {
-                this.put(builder.port, builder.host, builder.uri, builder.handler)
-            } else {
-                this.post(builder.port, builder.host, builder.uri, builder.handler)
-            }
 
-            for ((k, v) in builder.headers) {
-                req.putHeader(k, v)
-            }
-            if (builder.body.length() > 0) {
-                req.putHeader("content-length", "${builder.body.length()}")
-                req.write(builder.body)
-            }
-            req.end()
+    val promise = CompletableFuture<T>()
+    val handler: (HttpClientResponse) -> Unit = { resp ->
+        promise.complete(builder.handler(resp))
+    }
+    val req = when (method) {
+        HttpMethod.GET -> {
+            this.get(builder.port, builder.host, builder.uri, handler)
+        }
+        HttpMethod.POST -> {
+            this.post(builder.port, builder.host, builder.uri, handler)
+        }
+        HttpMethod.PUT -> {
+            this.put(builder.port, builder.host, builder.uri, handler)
         }
         HttpMethod.DELETE -> {
+            this.delete(builder.port, builder.host, builder.uri, handler)
         }
-        else -> {
+        else -> throw UnsupportedOperationException()
+    }
+
+    for ((k, v) in builder.headers) {
+        req.putHeader(k, v)
+    }
+    if (method == HttpMethod.POST || method == HttpMethod.PUT) {
+        if (builder.body.length() > 0) {
+            req.putHeader("content-length", "${builder.body.length()}")
+            req.write(builder.body)
         }
     }
+    req.end()
+    return promise
 }
 
 /**
@@ -62,7 +66,7 @@ fun MutableMap<String, MutableList<String>>.put(key: String, value: String) {
  *
  * Created by maxiaojun on 9/13/2016.
  */
-class RequestBuilder {
+class RequestBuilder<T> {
     /**
      * The target request port. Defaults to 8080
      */
@@ -96,7 +100,7 @@ class RequestBuilder {
     /**
      * The response handler for the request
      */
-    var handler: (HttpClientResponse) -> Unit = { }
+    var handler: (HttpClientResponse) -> T? = { null }
         get
         private set
 
@@ -136,7 +140,7 @@ class RequestBuilder {
      *
      * @param h Response handling function
      */
-    fun handler(h: (HttpClientResponse) -> Unit) {
+    fun handler(h: (HttpClientResponse) -> T) {
         handler = h
     }
 }
