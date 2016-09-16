@@ -51,16 +51,12 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 200)
                 resp.bodyHandler { body ->
-                    try {
-                        val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
-                        ctx.assertEquals(exercise?.name, "Test Exercise A")
-                        async.complete()
-                    } catch (e: Exception) {
-                        ctx.fail(e)
-                    }
+                    val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
+                    ctx.assertEquals(exercise?.name, "Test Exercise A")
+                    async.complete()
                 }
             }
-        }
+        }.exceptionally { e -> ctx.fail(e) }
     }
 
     @Test
@@ -89,18 +85,14 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 200)
                 resp.bodyHandler { body ->
-                    try {
-                        val array = body.toJsonArray()
-                        ctx.assertEquals(array.size(), 3)
-                        ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise A")
-                        ctx.assertEquals(array.getJsonObject(2).getString("name"), "Test Exercise B")
-                        async1.complete()
-                    } catch (e: Exception) {
-                        ctx.fail(e)
-                    }
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 3)
+                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise A")
+                    ctx.assertEquals(array.getJsonObject(2).getString("name"), "Test Exercise B")
+                    async1.complete()
                 }
             }
-        }
+        }.exceptionally { e -> ctx.fail(e) }
 
         // test offset
         val async2 = ctx.async()
@@ -112,17 +104,13 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 200)
                 resp.bodyHandler { body ->
-                    try {
-                        val array = body.toJsonArray()
-                        ctx.assertEquals(array.size(), 2)
-                        ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise C")
-                        async2.complete()
-                    } catch (e: Exception) {
-                        ctx.fail(e)
-                    }
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 2)
+                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise C")
+                    async2.complete()
                 }
             }
-        }
+        }.exceptionally { e -> ctx.fail(e) }
 
         // test limit
         val async3 = ctx.async()
@@ -134,17 +122,13 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 200)
                 resp.bodyHandler { body ->
-                    try {
-                        val array = body.toJsonArray()
-                        ctx.assertEquals(array.size(), 1)
-                        ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise A")
-                        async3.complete()
-                    } catch (e: Exception) {
-                        ctx.fail(e)
-                    }
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 1)
+                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise A")
+                    async3.complete()
                 }
             }
-        }
+        }.exceptionally { e -> ctx.fail(e) }
 
         // test sort by
         val async4 = ctx.async()
@@ -156,17 +140,13 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 200)
                 resp.bodyHandler { body ->
-                    try {
-                        val array = body.toJsonArray()
-                        ctx.assertEquals(array.size(), 3)
-                        ctx.assertEquals(array.getJsonObject(1).getString("name"), "Test Exercise B")
-                        async4.complete()
-                    } catch (e: Exception) {
-                        ctx.fail(e)
-                    }
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 3)
+                    ctx.assertEquals(array.getJsonObject(1).getString("name"), "Test Exercise B")
+                    async4.complete()
                 }
             }
-        }
+        }.exceptionally { e -> ctx.fail(e) }
 
         // test desc
         val async5 = ctx.async()
@@ -178,17 +158,13 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 200)
                 resp.bodyHandler { body ->
-                    try {
-                        val array = body.toJsonArray()
-                        ctx.assertEquals(array.size(), 3)
-                        ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise B")
-                        async5.complete()
-                    } catch (e: Exception) {
-                        ctx.fail(e)
-                    }
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 3)
+                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise B")
+                    async5.complete()
                 }
             }
-        }
+        }.exceptionally { e -> ctx.fail(e) }
 
         // test combo
         val async6 = ctx.async()
@@ -203,17 +179,13 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 200)
                 resp.bodyHandler { body ->
-                    try {
-                        val array = body.toJsonArray()
-                        ctx.assertEquals(array.size(), 1)
-                        ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise B")
-                        async6.complete()
-                    } catch (e: Exception) {
-                        ctx.fail(e)
-                    }
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 1)
+                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise B")
+                    async6.complete()
                 }
             }
-        }
+        }.exceptionally { e -> ctx.fail(e) }
     }
 
     @Test
@@ -236,7 +208,7 @@ class ExerciseResourceTest {
                 async.complete()
                 resp.headers()["location"].substringAfterLast('/')
             }
-        }.thenAccept { id ->
+        }.thenCompose { id ->
             async = ctx.async()
             client.doRequest<Unit>(HttpMethod.GET) {
                 uri {
@@ -246,17 +218,13 @@ class ExerciseResourceTest {
                 handler { resp ->
                     ctx.assertEquals(resp.statusCode(), 200)
                     resp.bodyHandler { body ->
-                        try {
-                            val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
-                            ctx.assertEquals(exercise?.name, "New Exercise")
-                            async.complete()
-                        } catch (e: Exception) {
-                            ctx.fail(e)
-                        }
+                        val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
+                        ctx.assertEquals(exercise?.name, "New Exercise")
+                        async.complete()
                     }
                 }
             }
-        }
+        }.exceptionally { e -> ctx.fail(e) }
     }
 
     @Test
