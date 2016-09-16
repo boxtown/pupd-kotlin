@@ -34,10 +34,11 @@ class ExerciseResource @Inject constructor(
             return
         }
 
-        if (createCommand.id == null || createCommand.name.length == 0) {
+        if (createCommand.name.length == 0) {
             ctx.response().sendBadRequest(ErrorCode.BAD_BODY)
             return
         }
+        createCommand.id = UUID.randomUUID()
 
         vertx.executeBlocking<Result>(
                 { future ->
