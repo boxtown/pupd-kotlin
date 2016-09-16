@@ -2,19 +2,19 @@ package com.pupd.backend.api.resources
 
 import com.pupd.backend.api.ApiVerticle
 import com.pupd.backend.data.entities.Exercise
-import com.pupd.backend.api.resources.deployTestEnvironment
 import com.pupd.backend.shared.vertx.doRequest
+import com.pupd.backend.shared.vertx.put
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.json.DecodeException
 import io.vertx.core.json.Json
-import io.vertx.core.json.JsonArray
 import io.vertx.ext.unit.TestContext
 import io.vertx.ext.unit.junit.VertxUnitRunner
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.*
 
 /**
  * Exercise Resource Test class
@@ -29,7 +29,8 @@ class ExerciseResourceTest {
     fun setUp(ctx: TestContext) {
         vertx = Vertx.vertx()
         vertx.deployTestEnvironment(ctx, "src/test/resources/sql/setup_exercise_test.sql") {
-            injector -> ApiVerticle(injector)
+            injector ->
+            ApiVerticle(injector)
         }
     }
 
@@ -50,13 +51,9 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 200)
                 resp.bodyHandler { body ->
-                    try {
-                        val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
-                        ctx.assertEquals(exercise?.name, "Test Exercise A")
-                        async.complete()
-                    } catch (e: DecodeException) {
-                        ctx.fail(e)
-                    }
+                    val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
+                    ctx.assertEquals(exercise?.name, "Test Exercise A")
+                    async.complete()
                 }
             }
         }
@@ -192,5 +189,54 @@ class ExerciseResourceTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun testCreateExercise(ctx: TestContext) {
+        val client = vertx.createHttpClient()
+        val async = ctx.async()
+        client.doRequest(HttpMethod.POST) {
+            uri {
+                path("exercise")
+            }
+            headers {
+                put("content-type", "application/json")
+            }
+            body {
+                appendString(Json.encode(
+                        Exercise(UUID.fromString("00000000-0000-4000-8000-000000000004"), "New Exercise")))
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 201)
+                ctx.assertEquals(resp.headers()["location"], "/exercise/00000000-0000-4000-8000-000000000004")
+
+                val async2 = ctx.async()
+                client.doRequest(HttpMethod.GET) {
+                    uri {
+                        path("exercise")
+                        path("00000000-0000-4000-8000-000000000004")
+                    }
+                    handler { resp ->
+                        ctx.assertEquals(resp.statusCode(), 200)
+                        resp.bodyHandler { body ->
+                            val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
+                            ctx.assertEquals(exercise?.name, "New Exercise")
+                            async2.complete()
+                        }
+                    }
+                }
+                async.complete()
+            }
+        }
+    }
+
+    @Test
+    fun testUpdateExercise(ctx: TestContext) {
+
+    }
+
+    @Test
+    fun testDeleteExercise(ctx: TestContext) {
+
     }
 }

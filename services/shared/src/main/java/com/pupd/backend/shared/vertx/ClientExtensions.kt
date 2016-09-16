@@ -1,5 +1,6 @@
 package com.pupd.backend.shared.vertx
 
+import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpClient
 import io.vertx.core.http.HttpClientResponse
 import io.vertx.core.http.HttpMethod
@@ -22,11 +23,38 @@ fun HttpClient.doRequest(method: HttpMethod, cfg: RequestBuilder.() -> Unit) {
             }
             req.end()
         }
-        HttpMethod.PUT -> {}
-        HttpMethod.POST -> {}
-        HttpMethod.DELETE -> {}
-        else -> {}
+        HttpMethod.PUT, HttpMethod.POST -> {
+            val req = if (method == HttpMethod.PUT) {
+                this.put(builder.port, builder.host, builder.uri, builder.handler)
+            } else {
+                this.post(builder.port, builder.host, builder.uri, builder.handler)
+            }
+
+            for ((k, v) in builder.headers) {
+                req.putHeader(k, v)
+            }
+            if (builder.body.length() > 0) {
+                req.putHeader("content-length", "${builder.body.length()}")
+                req.write(builder.body)
+            }
+            req.end()
+        }
+        HttpMethod.DELETE -> {
+        }
+        else -> {
+        }
     }
+}
+
+/**
+ * Extension function for headers (Mutable map of strings to mutable list of strings)
+ * that allows insertion of single value without wrapping in a mutable list
+ *
+ * @param key Header key
+ * @param value Header value
+ */
+fun MutableMap<String, MutableList<String>>.put(key: String, value: String) {
+    this[key]?.add(value) ?: this.put(key, mutableListOf(value))
 }
 
 /**
@@ -46,6 +74,13 @@ class RequestBuilder {
     var host = "localhost"
 
     /**
+     * The request body
+     */
+    var body: Buffer = Buffer.buffer()
+        get
+        private set
+
+    /**
      * The relative URI. Built using the uri() method
      */
     var uri = ""
@@ -56,7 +91,7 @@ class RequestBuilder {
      * Map of headers. Can be built in a Kotlin-esque builder fashion
      * using the headers() method
      */
-    val headers: MutableMap<String, Iterable<String>> = mutableMapOf()
+    val headers: MutableMap<String, MutableList<String>> = mutableMapOf()
 
     /**
      * The response handler for the request
@@ -82,8 +117,17 @@ class RequestBuilder {
      *
      * @param cfg Headers building logic
      */
-    fun headers(cfg: MutableMap<String, Iterable<String>>.() -> Unit) {
+    fun headers(cfg: MutableMap<String, MutableList<String>>.() -> Unit) {
         headers.cfg()
+    }
+
+    /**
+     * Builder method for request body. The builder works on a Vertx Buffer
+     *
+     * @param cfg Body building logic
+     */
+    fun body(cfg: Buffer.() -> Unit) {
+        body.cfg()
     }
 
     /**
