@@ -52,7 +52,7 @@ class WorkoutResource @Inject constructor(
     /**
      * Applies exercise resource route handlers to a Vertx HTTP Router
      */
-    fun applyTo(router: Router) {
+    infix fun applyTo(router: Router) {
         router.route("/workout*").handler(BodyHandler.create())
 
         router

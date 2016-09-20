@@ -267,7 +267,7 @@ class ExerciseResourceTest {
 
     @Test
     fun testUpdateExercise(ctx: TestContext) {
-        var async = ctx.async()
+        var async1 = ctx.async()
         client.doRequest<Unit>(HttpMethod.PUT) {
             uri {
                 path("exercise")
@@ -281,10 +281,10 @@ class ExerciseResourceTest {
             }
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 202)
-                async.complete()
+                async1.complete()
             }
         }.thenCompose {
-            async = ctx.async()
+            async1 = ctx.async()
             client.doRequest<Unit>(HttpMethod.GET) {
                 uri {
                     path("exercise")
@@ -295,19 +295,91 @@ class ExerciseResourceTest {
                     resp.bodyHandler { body ->
                         val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
                         ctx.assertEquals(exercise?.name, "Updated Exercise")
-                        async.complete()
+                        async1.complete()
                     }
                 }
+            }
+        }.exceptionally { e -> ctx.fail(e) }
+
+        // test idempotency
+        val async2 = ctx.async()
+        client.doRequest<Unit>(HttpMethod.PUT) {
+            uri {
+                path("exercise")
+                path("null")
+            }
+            headers {
+                put("content-type", "application/json")
+            }
+            body {
+                appendString(Json.encode(Exercise(name = "Updated Exercise")))
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 202)
+                async2.complete()
             }
         }.exceptionally { e -> ctx.fail(e) }
     }
 
     @Test
     fun testUpdateBadExercise(ctx: TestContext) {
+        // test invalid exercise name
+        val async = ctx.async()
+        client.doRequest<Unit>(HttpMethod.PUT) {
+            uri {
+                path("exercise")
+                path("00000000-0000-4000-8000-000000000001")
+            }
+            headers {
+                put("content-type", "application/json")
+            }
+            body {
+                appendString(Json.encode(Exercise()))
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 400)
+                async.complete()
+            }
+        }
     }
 
     @Test
     fun testDeleteExercise(ctx: TestContext) {
-
+        var async = ctx.async()
+        client.doRequest<Unit>(HttpMethod.DELETE) {
+            uri {
+                path("exercise")
+                path("00000000-0000-4000-8000-000000000001")
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 202)
+                async.complete()
+            }
+        }.thenCompose {
+            async = ctx.async()
+            client.doRequest<Unit>(HttpMethod.GET) {
+                uri {
+                    path("exercise")
+                    path("00000000-0000-4000-8000-000000000001")
+                }
+                handler { resp ->
+                    ctx.assertEquals(resp.statusCode(), 404)
+                    async.complete()
+                }
+            }
+        }.thenCompose {
+            // test idempotency
+            async = ctx.async()
+            client.doRequest<Unit>(HttpMethod.DELETE) {
+                uri {
+                    path("exercise")
+                    path("00000000-0000-4000-8000-000000000001")
+                }
+                handler { resp ->
+                    ctx.assertEquals(resp.statusCode(), 202)
+                    async.complete()
+                }
+            }
+        }.exceptionally { e -> ctx.fail(e) }
     }
 }

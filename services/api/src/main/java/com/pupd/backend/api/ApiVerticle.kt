@@ -23,10 +23,8 @@ class ApiVerticle(private var injector: Injector? = null) : AbstractVerticle() {
         Json.mapper.registerResourceModule()
 
         val router = Router.router(vertx)
-        val exerciseResource = injector!!.getInstance(ExerciseResource::class.java)
-        val workoutResource = injector!!.getInstance(WorkoutResource::class.java)
-        exerciseResource.applyTo(router)
-        workoutResource.applyTo(router)
+        injector!!.getInstance(ExerciseResource::class.java) applyTo router
+        injector!!.getInstance(WorkoutResource::class.java) applyTo router
 
         vertx
                 .createHttpServer()
