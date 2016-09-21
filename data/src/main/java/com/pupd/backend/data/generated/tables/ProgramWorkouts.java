@@ -36,7 +36,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ProgramWorkouts extends TableImpl<ProgramWorkoutsRecord> {
 
-    private static final long serialVersionUID = 43321708;
+    private static final long serialVersionUID = 1935799631;
 
     /**
      * The reference instance of <code>public.program_workouts</code>
@@ -50,11 +50,6 @@ public class ProgramWorkouts extends TableImpl<ProgramWorkoutsRecord> {
     public Class<ProgramWorkoutsRecord> getRecordType() {
         return ProgramWorkoutsRecord.class;
     }
-
-    /**
-     * The column <code>public.program_workouts.id</code>.
-     */
-    public final TableField<ProgramWorkoutsRecord, UUID> ID = createField("id", org.jooq.impl.SQLDataType.UUID.nullable(false), this, "");
 
     /**
      * The column <code>public.program_workouts.program_id</code>.
@@ -114,7 +109,7 @@ public class ProgramWorkouts extends TableImpl<ProgramWorkoutsRecord> {
      */
     @Override
     public List<UniqueKey<ProgramWorkoutsRecord>> getKeys() {
-        return Arrays.<UniqueKey<ProgramWorkoutsRecord>>asList(Keys.PROGRAM_WORKOUTS_PKEY, Keys.PROGRAM_WORKOUTS_PROGRAM_ID_WORKOUT_ID_POS_KEY);
+        return Arrays.<UniqueKey<ProgramWorkoutsRecord>>asList(Keys.PROGRAM_WORKOUTS_PKEY);
     }
 
     /**

@@ -48,7 +48,6 @@ public class Keys {
     public static final UniqueKey<ExercisesRecord> EXERCISES_PKEY = UniqueKeys0.EXERCISES_PKEY;
     public static final UniqueKey<ExercisesRecord> EXERCISES_NAME_KEY = UniqueKeys0.EXERCISES_NAME_KEY;
     public static final UniqueKey<ProgramWorkoutsRecord> PROGRAM_WORKOUTS_PKEY = UniqueKeys0.PROGRAM_WORKOUTS_PKEY;
-    public static final UniqueKey<ProgramWorkoutsRecord> PROGRAM_WORKOUTS_PROGRAM_ID_WORKOUT_ID_POS_KEY = UniqueKeys0.PROGRAM_WORKOUTS_PROGRAM_ID_WORKOUT_ID_POS_KEY;
     public static final UniqueKey<ProgramsRecord> PROGRAMS_PKEY = UniqueKeys0.PROGRAMS_PKEY;
     public static final UniqueKey<ProgramsRecord> PROGRAMS_NAME_KEY = UniqueKeys0.PROGRAMS_NAME_KEY;
     public static final UniqueKey<WorkoutExercisesRecord> WORKOUT_EXERCISES_PKEY = UniqueKeys0.WORKOUT_EXERCISES_PKEY;
@@ -70,8 +69,7 @@ public class Keys {
     private static class UniqueKeys0 extends AbstractKeys {
         public static final UniqueKey<ExercisesRecord> EXERCISES_PKEY = createUniqueKey(Exercises.EXERCISES, "exercises_pkey", Exercises.EXERCISES.ID);
         public static final UniqueKey<ExercisesRecord> EXERCISES_NAME_KEY = createUniqueKey(Exercises.EXERCISES, "exercises_name_key", Exercises.EXERCISES.NAME);
-        public static final UniqueKey<ProgramWorkoutsRecord> PROGRAM_WORKOUTS_PKEY = createUniqueKey(ProgramWorkouts.PROGRAM_WORKOUTS, "program_workouts_pkey", ProgramWorkouts.PROGRAM_WORKOUTS.ID);
-        public static final UniqueKey<ProgramWorkoutsRecord> PROGRAM_WORKOUTS_PROGRAM_ID_WORKOUT_ID_POS_KEY = createUniqueKey(ProgramWorkouts.PROGRAM_WORKOUTS, "program_workouts_program_id_workout_id_pos_key", ProgramWorkouts.PROGRAM_WORKOUTS.PROGRAM_ID, ProgramWorkouts.PROGRAM_WORKOUTS.WORKOUT_ID, ProgramWorkouts.PROGRAM_WORKOUTS.POS);
+        public static final UniqueKey<ProgramWorkoutsRecord> PROGRAM_WORKOUTS_PKEY = createUniqueKey(ProgramWorkouts.PROGRAM_WORKOUTS, "program_workouts_pkey", ProgramWorkouts.PROGRAM_WORKOUTS.PROGRAM_ID, ProgramWorkouts.PROGRAM_WORKOUTS.WORKOUT_ID, ProgramWorkouts.PROGRAM_WORKOUTS.POS);
         public static final UniqueKey<ProgramsRecord> PROGRAMS_PKEY = createUniqueKey(Programs.PROGRAMS, "programs_pkey", Programs.PROGRAMS.ID);
         public static final UniqueKey<ProgramsRecord> PROGRAMS_NAME_KEY = createUniqueKey(Programs.PROGRAMS, "programs_name_key", Programs.PROGRAMS.NAME);
         public static final UniqueKey<WorkoutExercisesRecord> WORKOUT_EXERCISES_PKEY = createUniqueKey(WorkoutExercises.WORKOUT_EXERCISES, "workout_exercises_pkey", WorkoutExercises.WORKOUT_EXERCISES.ID);
