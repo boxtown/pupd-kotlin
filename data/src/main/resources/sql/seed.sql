@@ -87,11 +87,9 @@ INSERT INTO public.programs VALUES (:id1, 'Starting Strength Phase 1');
 INSERT INTO public.program_workouts VALUES (
   :id1,
   :id1,
-  :id1,
   0
 );
 INSERT INTO public.program_workouts VALUES (
-  :id2,
   :id1,
   :id2,
   1

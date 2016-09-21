@@ -57,11 +57,10 @@ GRANT SELECT, INSERT, UPDATE, DELETE on public.programs TO api;
 -- create mapping table for programs <-> workouts
 
 CREATE TABLE IF NOT EXISTS public.program_workouts (
-    id              UUID PRIMARY KEY,
     program_id      UUID NOT NULL,
     workout_id      UUID NOT NULL,
     pos             integer NOT NULL CHECK (pos >= 0),
-    UNIQUE (program_id, workout_id, pos),
+    PRIMARY KEY (program_id, workout_id, pos),
     FOREIGN KEY (program_id) REFERENCES public.programs (id)
             ON UPDATE CASCADE
             ON DELETE CASCADE

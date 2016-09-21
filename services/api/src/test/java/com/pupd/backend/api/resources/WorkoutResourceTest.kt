@@ -7,6 +7,7 @@ import io.vertx.ext.unit.TestContext
 import io.vertx.ext.unit.junit.VertxUnitRunner
 import org.junit.After
 import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
@@ -35,5 +36,10 @@ class WorkoutResourceTest {
     @After
     fun tearDown(ctx: TestContext) {
         vertx.close(ctx.asyncAssertSuccess())
+    }
+
+    @Test
+    fun testGetWorkout() {
+        
     }
 }
