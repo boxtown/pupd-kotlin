@@ -58,7 +58,7 @@ task generate << {
                 .withInputSchema('public'))
             .withTarget(new Target()
                 .withPackageName('com.pupd.backend.data.generated')
-                .withDirectory('src/main/java/com/pupd/backend/data/generated')))
+                .withDirectory('data/src/main/java')))
     GenerationTool.generate(config)
 }
 

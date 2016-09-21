@@ -4,6 +4,7 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 import com.pupd.backend.api.resources.ExerciseResource
 import com.pupd.backend.api.resources.WorkoutResource
+import com.pupd.backend.api.resources.register
 import com.pupd.backend.api.resources.registerResourceModule
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
@@ -23,8 +24,8 @@ class ApiVerticle(private var injector: Injector? = null) : AbstractVerticle() {
         Json.mapper.registerResourceModule()
 
         val router = Router.router(vertx)
-        injector!!.getInstance(ExerciseResource::class.java) applyTo router
-        injector!!.getInstance(WorkoutResource::class.java) applyTo router
+        router.register(injector!!.getInstance(ExerciseResource::class.java))
+        router.register(injector!!.getInstance(WorkoutResource::class.java))
 
         vertx
                 .createHttpServer()

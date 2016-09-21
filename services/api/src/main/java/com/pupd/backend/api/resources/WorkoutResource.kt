@@ -21,7 +21,7 @@ import javax.inject.Inject
 class WorkoutResource @Inject constructor(
         private val vertx: Vertx,
         private val commandBus: CommandBus,
-        private val getWorkoutHandler: QueryHandler<GetWorkout, Workout?>) {
+        private val getWorkoutHandler: QueryHandler<GetWorkout, Workout?>): Resource {
 
     fun getWorkout(ctx: RoutingContext) {
         val id = try {
@@ -52,7 +52,7 @@ class WorkoutResource @Inject constructor(
     /**
      * Applies exercise resource route handlers to a Vertx HTTP Router
      */
-    infix fun applyTo(router: Router) {
+    override fun applyTo(router: Router) {
         router.route("/workout*").handler(BodyHandler.create())
 
         router

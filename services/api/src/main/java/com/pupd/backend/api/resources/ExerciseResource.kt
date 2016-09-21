@@ -24,7 +24,7 @@ class ExerciseResource @Inject constructor(
         private val vertx: Vertx,
         private val commandBus: CommandBus,
         private val getExerciseHandler: QueryHandler<GetExercise, Exercise?>,
-        private val listExercisesHandler: QueryHandler<ListExercises, Iterable<Exercise>>) {
+        private val listExercisesHandler: QueryHandler<ListExercises, Iterable<Exercise>>): Resource {
 
     fun createExercise(ctx: RoutingContext) {
         val createCommand = try {
@@ -167,7 +167,7 @@ class ExerciseResource @Inject constructor(
     /**
      * Applies exercise resource route handlers to a Vertx HTTP Router
      */
-    infix fun applyTo(router: Router) {
+    override fun applyTo(router: Router) {
         router.route("/exercise*").handler(BodyHandler.create())
 
         router

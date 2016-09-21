@@ -4,9 +4,8 @@
 package com.pupd.backend.data.generated;
 
 
-import com.pupd.backend.data.generated.tables.CycleWorkouts;
-import com.pupd.backend.data.generated.tables.Cycles;
 import com.pupd.backend.data.generated.tables.Exercises;
+import com.pupd.backend.data.generated.tables.ProgramWorkouts;
 import com.pupd.backend.data.generated.tables.Programs;
 import com.pupd.backend.data.generated.tables.WorkoutExercises;
 import com.pupd.backend.data.generated.tables.Workouts;
@@ -35,7 +34,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Public extends SchemaImpl {
 
-    private static final long serialVersionUID = -1930145630;
+    private static final long serialVersionUID = -867014640;
 
     /**
      * The reference instance of <code>public</code>
@@ -43,19 +42,14 @@ public class Public extends SchemaImpl {
     public static final Public PUBLIC = new Public();
 
     /**
-     * The table <code>public.cycle_workouts</code>.
-     */
-    public final CycleWorkouts CYCLE_WORKOUTS = com.pupd.backend.data.generated.tables.CycleWorkouts.CYCLE_WORKOUTS;
-
-    /**
-     * The table <code>public.cycles</code>.
-     */
-    public final Cycles CYCLES = com.pupd.backend.data.generated.tables.Cycles.CYCLES;
-
-    /**
      * The table <code>public.exercises</code>.
      */
     public final Exercises EXERCISES = com.pupd.backend.data.generated.tables.Exercises.EXERCISES;
+
+    /**
+     * The table <code>public.program_workouts</code>.
+     */
+    public final ProgramWorkouts PROGRAM_WORKOUTS = com.pupd.backend.data.generated.tables.ProgramWorkouts.PROGRAM_WORKOUTS;
 
     /**
      * The table <code>public.programs</code>.
@@ -97,9 +91,8 @@ public class Public extends SchemaImpl {
 
     private final List<Table<?>> getTables0() {
         return Arrays.<Table<?>>asList(
-            CycleWorkouts.CYCLE_WORKOUTS,
-            Cycles.CYCLES,
             Exercises.EXERCISES,
+            ProgramWorkouts.PROGRAM_WORKOUTS,
             Programs.PROGRAMS,
             WorkoutExercises.WORKOUT_EXERCISES,
             Workouts.WORKOUTS);

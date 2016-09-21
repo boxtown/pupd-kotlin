@@ -32,7 +32,7 @@ INSERT INTO public.workouts VALUES (:id6, 'Starting Strength Phase 3 Day B');
 
 -- SS P1 DA
 INSERT INTO public.workout_exercises VALUES (
-  gen_random_uuid(),
+  :id1,
   :id1,
   :id1,
   '{5,5,5}',
@@ -40,7 +40,7 @@ INSERT INTO public.workout_exercises VALUES (
   5.0
 );
 INSERT INTO public.workout_exercises VALUES (
-  gen_random_uuid(),
+  :id2,
   :id1,
   :id3,
   '{5,5,5}',
@@ -48,7 +48,7 @@ INSERT INTO public.workout_exercises VALUES (
   5.0
 );
 INSERT INTO public.workout_exercises VALUES (
-  gen_random_uuid(),
+  :id3,
   :id1,
   :id7,
   '{5}',
@@ -58,7 +58,7 @@ INSERT INTO public.workout_exercises VALUES (
 
 -- SS P1 DB
 INSERT INTO public.workout_exercises VALUES (
-  gen_random_uuid(),
+  :id4,
   :id2,
   :id1,
   '{5,5,5}',
@@ -66,7 +66,7 @@ INSERT INTO public.workout_exercises VALUES (
   5.0
 );
 INSERT INTO public.workout_exercises VALUES (
-  gen_random_uuid(),
+  :id5,
   :id2,
   :id5,
   '{5,5,5}',
@@ -74,7 +74,7 @@ INSERT INTO public.workout_exercises VALUES (
   5.0
 );
 INSERT INTO public.workout_exercises VALUES (
-  gen_random_uuid(),
+  :id6,
   :id2,
   :id5,
   '{5,5,5}',
@@ -84,15 +84,14 @@ INSERT INTO public.workout_exercises VALUES (
 
 -- SS P1 Program
 INSERT INTO public.programs VALUES (:id1, 'Starting Strength Phase 1');
-INSERT INTO public.cycles VALUES (:id1, :id1);
-INSERT INTO public.cycle_workouts VALUES (
-  gen_random_uuid(),
+INSERT INTO public.program_workouts VALUES (
+  :id1,
   :id1,
   :id1,
   0
 );
-INSERT INTO public.cycle_workouts VALUES (
-  gen_random_uuid(),
+INSERT INTO public.program_workouts VALUES (
+  :id2,
   :id1,
   :id2,
   1

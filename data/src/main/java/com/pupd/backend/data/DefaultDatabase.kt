@@ -1,8 +1,5 @@
 package com.pupd.backend.data
 
-import com.pupd.backend.data.DataException
-import com.pupd.backend.data.Database
-import com.pupd.backend.data.UniquenessConstraintViolationException
 import org.jooq.DSLContext
 import org.jooq.SQLDialect
 import org.jooq.exception.DataAccessException

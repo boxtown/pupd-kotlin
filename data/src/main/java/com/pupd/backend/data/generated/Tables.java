@@ -4,9 +4,8 @@
 package com.pupd.backend.data.generated;
 
 
-import com.pupd.backend.data.generated.tables.CycleWorkouts;
-import com.pupd.backend.data.generated.tables.Cycles;
 import com.pupd.backend.data.generated.tables.Exercises;
+import com.pupd.backend.data.generated.tables.ProgramWorkouts;
 import com.pupd.backend.data.generated.tables.Programs;
 import com.pupd.backend.data.generated.tables.WorkoutExercises;
 import com.pupd.backend.data.generated.tables.Workouts;
@@ -28,19 +27,14 @@ import javax.annotation.Generated;
 public class Tables {
 
     /**
-     * The table <code>public.cycle_workouts</code>.
-     */
-    public static final CycleWorkouts CYCLE_WORKOUTS = com.pupd.backend.data.generated.tables.CycleWorkouts.CYCLE_WORKOUTS;
-
-    /**
-     * The table <code>public.cycles</code>.
-     */
-    public static final Cycles CYCLES = com.pupd.backend.data.generated.tables.Cycles.CYCLES;
-
-    /**
      * The table <code>public.exercises</code>.
      */
     public static final Exercises EXERCISES = com.pupd.backend.data.generated.tables.Exercises.EXERCISES;
+
+    /**
+     * The table <code>public.program_workouts</code>.
+     */
+    public static final ProgramWorkouts PROGRAM_WORKOUTS = com.pupd.backend.data.generated.tables.ProgramWorkouts.PROGRAM_WORKOUTS;
 
     /**
      * The table <code>public.programs</code>.

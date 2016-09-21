@@ -4,15 +4,13 @@
 package com.pupd.backend.data.generated;
 
 
-import com.pupd.backend.data.generated.tables.CycleWorkouts;
-import com.pupd.backend.data.generated.tables.Cycles;
 import com.pupd.backend.data.generated.tables.Exercises;
+import com.pupd.backend.data.generated.tables.ProgramWorkouts;
 import com.pupd.backend.data.generated.tables.Programs;
 import com.pupd.backend.data.generated.tables.WorkoutExercises;
 import com.pupd.backend.data.generated.tables.Workouts;
-import com.pupd.backend.data.generated.tables.records.CycleWorkoutsRecord;
-import com.pupd.backend.data.generated.tables.records.CyclesRecord;
 import com.pupd.backend.data.generated.tables.records.ExercisesRecord;
+import com.pupd.backend.data.generated.tables.records.ProgramWorkoutsRecord;
 import com.pupd.backend.data.generated.tables.records.ProgramsRecord;
 import com.pupd.backend.data.generated.tables.records.WorkoutExercisesRecord;
 import com.pupd.backend.data.generated.tables.records.WorkoutsRecord;
@@ -47,11 +45,10 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<CycleWorkoutsRecord> CYCLE_WORKOUTS_PKEY = UniqueKeys0.CYCLE_WORKOUTS_PKEY;
-    public static final UniqueKey<CycleWorkoutsRecord> CYCLE_WORKOUTS_CYCLE_ID_WORKOUT_ID_POS_KEY = UniqueKeys0.CYCLE_WORKOUTS_CYCLE_ID_WORKOUT_ID_POS_KEY;
-    public static final UniqueKey<CyclesRecord> CYCLES_PKEY = UniqueKeys0.CYCLES_PKEY;
     public static final UniqueKey<ExercisesRecord> EXERCISES_PKEY = UniqueKeys0.EXERCISES_PKEY;
     public static final UniqueKey<ExercisesRecord> EXERCISES_NAME_KEY = UniqueKeys0.EXERCISES_NAME_KEY;
+    public static final UniqueKey<ProgramWorkoutsRecord> PROGRAM_WORKOUTS_PKEY = UniqueKeys0.PROGRAM_WORKOUTS_PKEY;
+    public static final UniqueKey<ProgramWorkoutsRecord> PROGRAM_WORKOUTS_PROGRAM_ID_WORKOUT_ID_POS_KEY = UniqueKeys0.PROGRAM_WORKOUTS_PROGRAM_ID_WORKOUT_ID_POS_KEY;
     public static final UniqueKey<ProgramsRecord> PROGRAMS_PKEY = UniqueKeys0.PROGRAMS_PKEY;
     public static final UniqueKey<ProgramsRecord> PROGRAMS_NAME_KEY = UniqueKeys0.PROGRAMS_NAME_KEY;
     public static final UniqueKey<WorkoutExercisesRecord> WORKOUT_EXERCISES_PKEY = UniqueKeys0.WORKOUT_EXERCISES_PKEY;
@@ -62,7 +59,7 @@ public class Keys {
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final ForeignKey<CyclesRecord, ProgramsRecord> CYCLES__CYCLES_PROGRAM_ID_FKEY = ForeignKeys0.CYCLES__CYCLES_PROGRAM_ID_FKEY;
+    public static final ForeignKey<ProgramWorkoutsRecord, ProgramsRecord> PROGRAM_WORKOUTS__PROGRAM_WORKOUTS_PROGRAM_ID_FKEY = ForeignKeys0.PROGRAM_WORKOUTS__PROGRAM_WORKOUTS_PROGRAM_ID_FKEY;
     public static final ForeignKey<WorkoutExercisesRecord, WorkoutsRecord> WORKOUT_EXERCISES__WORKOUT_EXERCISES_WORKOUT_ID_FKEY = ForeignKeys0.WORKOUT_EXERCISES__WORKOUT_EXERCISES_WORKOUT_ID_FKEY;
     public static final ForeignKey<WorkoutExercisesRecord, ExercisesRecord> WORKOUT_EXERCISES__WORKOUT_EXERCISES_EXERCISE_ID_FKEY = ForeignKeys0.WORKOUT_EXERCISES__WORKOUT_EXERCISES_EXERCISE_ID_FKEY;
 
@@ -71,11 +68,10 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     private static class UniqueKeys0 extends AbstractKeys {
-        public static final UniqueKey<CycleWorkoutsRecord> CYCLE_WORKOUTS_PKEY = createUniqueKey(CycleWorkouts.CYCLE_WORKOUTS, "cycle_workouts_pkey", CycleWorkouts.CYCLE_WORKOUTS.ID);
-        public static final UniqueKey<CycleWorkoutsRecord> CYCLE_WORKOUTS_CYCLE_ID_WORKOUT_ID_POS_KEY = createUniqueKey(CycleWorkouts.CYCLE_WORKOUTS, "cycle_workouts_cycle_id_workout_id_pos_key", CycleWorkouts.CYCLE_WORKOUTS.CYCLE_ID, CycleWorkouts.CYCLE_WORKOUTS.WORKOUT_ID, CycleWorkouts.CYCLE_WORKOUTS.POS);
-        public static final UniqueKey<CyclesRecord> CYCLES_PKEY = createUniqueKey(Cycles.CYCLES, "cycles_pkey", Cycles.CYCLES.ID);
         public static final UniqueKey<ExercisesRecord> EXERCISES_PKEY = createUniqueKey(Exercises.EXERCISES, "exercises_pkey", Exercises.EXERCISES.ID);
         public static final UniqueKey<ExercisesRecord> EXERCISES_NAME_KEY = createUniqueKey(Exercises.EXERCISES, "exercises_name_key", Exercises.EXERCISES.NAME);
+        public static final UniqueKey<ProgramWorkoutsRecord> PROGRAM_WORKOUTS_PKEY = createUniqueKey(ProgramWorkouts.PROGRAM_WORKOUTS, "program_workouts_pkey", ProgramWorkouts.PROGRAM_WORKOUTS.ID);
+        public static final UniqueKey<ProgramWorkoutsRecord> PROGRAM_WORKOUTS_PROGRAM_ID_WORKOUT_ID_POS_KEY = createUniqueKey(ProgramWorkouts.PROGRAM_WORKOUTS, "program_workouts_program_id_workout_id_pos_key", ProgramWorkouts.PROGRAM_WORKOUTS.PROGRAM_ID, ProgramWorkouts.PROGRAM_WORKOUTS.WORKOUT_ID, ProgramWorkouts.PROGRAM_WORKOUTS.POS);
         public static final UniqueKey<ProgramsRecord> PROGRAMS_PKEY = createUniqueKey(Programs.PROGRAMS, "programs_pkey", Programs.PROGRAMS.ID);
         public static final UniqueKey<ProgramsRecord> PROGRAMS_NAME_KEY = createUniqueKey(Programs.PROGRAMS, "programs_name_key", Programs.PROGRAMS.NAME);
         public static final UniqueKey<WorkoutExercisesRecord> WORKOUT_EXERCISES_PKEY = createUniqueKey(WorkoutExercises.WORKOUT_EXERCISES, "workout_exercises_pkey", WorkoutExercises.WORKOUT_EXERCISES.ID);
@@ -84,7 +80,7 @@ public class Keys {
     }
 
     private static class ForeignKeys0 extends AbstractKeys {
-        public static final ForeignKey<CyclesRecord, ProgramsRecord> CYCLES__CYCLES_PROGRAM_ID_FKEY = createForeignKey(com.pupd.backend.data.generated.Keys.PROGRAMS_PKEY, Cycles.CYCLES, "cycles__cycles_program_id_fkey", Cycles.CYCLES.PROGRAM_ID);
+        public static final ForeignKey<ProgramWorkoutsRecord, ProgramsRecord> PROGRAM_WORKOUTS__PROGRAM_WORKOUTS_PROGRAM_ID_FKEY = createForeignKey(com.pupd.backend.data.generated.Keys.PROGRAMS_PKEY, ProgramWorkouts.PROGRAM_WORKOUTS, "program_workouts__program_workouts_program_id_fkey", ProgramWorkouts.PROGRAM_WORKOUTS.PROGRAM_ID);
         public static final ForeignKey<WorkoutExercisesRecord, WorkoutsRecord> WORKOUT_EXERCISES__WORKOUT_EXERCISES_WORKOUT_ID_FKEY = createForeignKey(com.pupd.backend.data.generated.Keys.WORKOUTS_PKEY, WorkoutExercises.WORKOUT_EXERCISES, "workout_exercises__workout_exercises_workout_id_fkey", WorkoutExercises.WORKOUT_EXERCISES.WORKOUT_ID);
         public static final ForeignKey<WorkoutExercisesRecord, ExercisesRecord> WORKOUT_EXERCISES__WORKOUT_EXERCISES_EXERCISE_ID_FKEY = createForeignKey(com.pupd.backend.data.generated.Keys.EXERCISES_PKEY, WorkoutExercises.WORKOUT_EXERCISES, "workout_exercises__workout_exercises_exercise_id_fkey", WorkoutExercises.WORKOUT_EXERCISES.EXERCISE_ID);
     }
