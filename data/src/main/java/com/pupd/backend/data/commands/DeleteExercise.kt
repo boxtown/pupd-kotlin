@@ -17,15 +17,11 @@ data class DeleteExercise(var id: UUID? = null)
  *
  * Created by maxiaojun on 9/7/16.
  */
-class DeleteExerciseHandler @Inject constructor(private val db: Database) :
-        BaseCommandHandler<DeleteExercise>(),
-        CommandHandler<DeleteExercise> {
-
-    override fun handle(command: DeleteExercise): Result =
-            super.handle(command) { command ->
-                db.exec { ctx ->
-                    ctx.deleteFrom(Tables.EXERCISES).where(Tables.EXERCISES.ID.equal(command.id)).execute()
-                }
-                Result()
-            }
+class DeleteExerciseHandler @Inject constructor(private val db: Database) : CommandHandler<DeleteExercise> {
+    override fun handle(command: DeleteExercise): Result {
+        db.exec { ctx ->
+            ctx.deleteFrom(Tables.EXERCISES).where(Tables.EXERCISES.ID.equal(command.id)).execute()
+        }
+        return Result()
+    }
 }

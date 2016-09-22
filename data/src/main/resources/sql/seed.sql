@@ -32,65 +32,39 @@ INSERT INTO public.workouts VALUES (:id6, 'Starting Strength Phase 3 Day B');
 
 -- SS P1 DA
 INSERT INTO public.workout_exercises VALUES (
-  :id1,
-  :id1,
-  :id1,
-  '{5,5,5}',
-  '{100.0,100.0,100.0}',
+  :id1, :id1, :id1,
+  '[{"reps":5, "weight":100.0},{"reps":5, "weight":100.0},{"reps":5, "weight":100.0}]',
   5.0
 );
 INSERT INTO public.workout_exercises VALUES (
-  :id2,
-  :id1,
-  :id3,
-  '{5,5,5}',
-  '{100.0,100.0,100.0}',
+  :id2, :id1, :id3,
+  '[{"reps":5, "weight":100.0},{"reps":5, "weight":100.0},{"reps":5, "weight":100.0}]',
   5.0
 );
 INSERT INTO public.workout_exercises VALUES (
-  :id3,
-  :id1,
-  :id7,
-  '{5}',
-  '{100.0}',
+  :id3, :id1, :id7,
+  '[{"reps":5, "weight":100.0}]',
   10.0
 );
 
 -- SS P1 DB
 INSERT INTO public.workout_exercises VALUES (
-  :id4,
-  :id2,
-  :id1,
-  '{5,5,5}',
-  '{100.0,100.0,100.0}',
+  :id4, :id2, :id1,
+  '[{"reps":5, "weight":100.0},{"reps":5, "weight":100.0},{"reps":5, "weight":100.0}]',
   5.0
 );
 INSERT INTO public.workout_exercises VALUES (
-  :id5,
-  :id2,
-  :id5,
-  '{5,5,5}',
-  '{100.0,100.0,100.0}',
+  :id5, :id2, :id5,
+  '[{"reps":5, "weight":100.0},{"reps":5, "weight":100.0},{"reps":5, "weight":100.0}]',
   5.0
 );
 INSERT INTO public.workout_exercises VALUES (
-  :id6,
-  :id2,
-  :id5,
-  '{5,5,5}',
-  '{100.0,100.0,100.0}',
+  :id6, :id2, :id5,
+  '[{"reps":5, "weight":100.0},{"reps":5, "weight":100.0},{"reps":5, "weight":100.0}]',
   5.0
 );
 
 -- SS P1 Program
 INSERT INTO public.programs VALUES (:id1, 'Starting Strength Phase 1');
-INSERT INTO public.program_workouts VALUES (
-  :id1,
-  :id1,
-  0
-);
-INSERT INTO public.program_workouts VALUES (
-  :id1,
-  :id2,
-  1
-)
+INSERT INTO public.program_workouts VALUES (:id1, :id1, 1, 0, 4);
+INSERT INTO public.program_workouts VALUES (:id1, :id2, 1, 2, 4);

@@ -5,8 +5,8 @@ version '1.0-SNAPSHOT'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
-    compile 'io.vertx:vertx-web:3.2.1'
-    compile 'io.vertx:vertx-unit:3.0.0'
+    compile 'io.vertx:vertx-web:3.3.3'
+    compile 'io.vertx:vertx-unit:3.3.3'
     compile 'com.h2database:h2:1.4.192'
     compile project(':data')
     compile project(':services:shared')
@@ -16,7 +16,6 @@ dependencies {
     main = 'io.vertx.core.Launcher'
     args = ['run', 'com.pupd.backend.api.ApiVerticle']
 } */
-
 jar {
     manifest {
         attributes(

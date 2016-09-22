@@ -36,7 +36,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ProgramWorkouts extends TableImpl<ProgramWorkoutsRecord> {
 
-    private static final long serialVersionUID = 1935799631;
+    private static final long serialVersionUID = -160580641;
 
     /**
      * The reference instance of <code>public.program_workouts</code>
@@ -62,9 +62,19 @@ public class ProgramWorkouts extends TableImpl<ProgramWorkoutsRecord> {
     public final TableField<ProgramWorkoutsRecord, UUID> WORKOUT_ID = createField("workout_id", org.jooq.impl.SQLDataType.UUID.nullable(false), this, "");
 
     /**
-     * The column <code>public.program_workouts.pos</code>.
+     * The column <code>public.program_workouts.reps</code>.
      */
-    public final TableField<ProgramWorkoutsRecord, Integer> POS = createField("pos", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<ProgramWorkoutsRecord, Integer> REPS = createField("reps", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+
+    /**
+     * The column <code>public.program_workouts.start_offset</code>.
+     */
+    public final TableField<ProgramWorkoutsRecord, Integer> START_OFFSET = createField("start_offset", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
+
+    /**
+     * The column <code>public.program_workouts.length_in_days</code>.
+     */
+    public final TableField<ProgramWorkoutsRecord, Integer> LENGTH_IN_DAYS = createField("length_in_days", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
      * Create a <code>public.program_workouts</code> table reference

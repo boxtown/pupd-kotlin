@@ -1,7 +1,5 @@
 package com.pupd.backend.data.commands
 
-import com.pupd.backend.data.DataException
-
 /**
  * Enumeration of possible command handler statuses
  *
@@ -34,23 +32,4 @@ interface CommandBus {
  */
 interface CommandHandler<in T> {
     fun handle(command: T): Result
-}
-
-/**
- * Base class for command handlers that wraps execution exceptions
- * into data exceptions
- *
- * Created by maxiaojun on 9/7/2016.
- */
-open class BaseCommandHandler<T> {
-    fun handle(command: T, handler: (T) -> Result): Result {
-        try {
-            return handler(command)
-        } catch (e: Exception) {
-            when (e) {
-                is DataException -> throw e
-                else -> throw DataException(e.message, e)
-            }
-        }
-    }
 }

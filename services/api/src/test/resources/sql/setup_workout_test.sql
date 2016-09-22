@@ -10,8 +10,7 @@ CREATE TABLE "public"."workout_exercises" (
     "id"          UUID PRIMARY KEY,
     "workout_id"  UUID NOT NULL,
     "exercise_id" UUID NOT NULL,
-    "reps"        ARRAY NOT NULL,
-    "weights"     ARRAY NOT NULL,
+    "sets"        NVARCHAR NOT NULL,
     "incr"        DOUBLE NOT NULL,
     FOREIGN KEY ("workout_id") REFERENCES "public"."workouts" ("id")
         ON UPDATE CASCADE

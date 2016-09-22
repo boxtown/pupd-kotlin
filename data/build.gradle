@@ -5,4 +5,5 @@ dependencies {
     compile 'org.jooq:jooq:3.8.4'
     compile 'com.zaxxer:HikariCP:2.4.7'
     compile 'org.postgresql:postgresql:9.4.1209'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.4'
 }

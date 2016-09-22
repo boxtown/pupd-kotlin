@@ -16,15 +16,11 @@ data class GetExercise(val id: UUID)
 /**
  * Query handler for get exercise query
  */
-class GetExerciseHandler @Inject constructor(private val db: Database) :
-        BaseQueryHandler<GetExercise, Exercise?>(),
-        QueryHandler<GetExercise, Exercise?> {
-
-    override fun handle(query: GetExercise): Exercise? = super.handle(query) { query ->
-        db.query { ctx ->
-            ctx.selectFrom(Tables.EXERCISES)
-                    .where(Tables.EXERCISES.ID.equal(query.id))
-                    .fetchOne()?.into(Exercise::class.java)
-        }
-    }
+class GetExerciseHandler @Inject constructor(private val db: Database) : QueryHandler<GetExercise, Exercise?> {
+    override fun handle(query: GetExercise): Exercise? =
+            db.query { ctx ->
+                ctx.selectFrom(Tables.EXERCISES)
+                        .where(Tables.EXERCISES.ID.equal(query.id))
+                        .fetchOne()?.into(Exercise::class.java)
+            }
 }

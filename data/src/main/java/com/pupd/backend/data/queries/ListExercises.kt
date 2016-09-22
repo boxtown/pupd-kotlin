@@ -18,25 +18,23 @@ data class ListExercises(val options: ListOptions)
  * Created by maxiaojun on 9/7/16.
  */
 class ListExercisesHandler @Inject constructor(private val db: Database) :
-        BaseQueryHandler<ListExercises, Iterable<Exercise>>(),
         QueryHandler<ListExercises, Iterable<Exercise>> {
 
-    override fun handle(query: ListExercises): Iterable<Exercise> = super.handle(query) { query ->
-        db.query { ctx ->
-            val field = Tables.EXERCISES.field(query.options.sort)
-            val sqlQuery = ctx.selectFrom(Tables.EXERCISES).query
+    override fun handle(query: ListExercises): Iterable<Exercise> =
+            db.query { ctx ->
+                val field = Tables.EXERCISES.field(query.options.sort)
+                val sqlQuery = ctx.selectFrom(Tables.EXERCISES).query
 
-            when {
-                query.options.desc -> sqlQuery.addOrderBy(field?.desc() ?: Tables.EXERCISES.ID.desc())
-                else -> sqlQuery.addOrderBy(field?.asc() ?: Tables.EXERCISES.ID.asc())
-            }
+                when {
+                    query.options.desc -> sqlQuery.addOrderBy(field?.desc() ?: Tables.EXERCISES.ID.desc())
+                    else -> sqlQuery.addOrderBy(field?.asc() ?: Tables.EXERCISES.ID.asc())
+                }
 
-            val offset = if (query.options.offset < 0) 0 else query.options.offset
-            when {
-                query.options.limit > 0 -> sqlQuery.addLimit(offset, query.options.limit)
-                else -> sqlQuery.addOffset(offset)
+                val offset = if (query.options.offset < 0) 0 else query.options.offset
+                when {
+                    query.options.limit > 0 -> sqlQuery.addLimit(offset, query.options.limit)
+                    else -> sqlQuery.addOffset(offset)
+                }
+                sqlQuery.fetch().into(Exercise::class.java)
             }
-            sqlQuery.fetch().into(Exercise::class.java)
-        }
-    }
 }

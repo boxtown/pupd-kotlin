@@ -4,7 +4,6 @@ import org.jooq.DSLContext
 import org.jooq.SQLDialect
 import org.jooq.exception.DataAccessException
 import org.jooq.impl.DSL
-import java.sql.SQLException
 import javax.inject.Inject
 import javax.sql.DataSource
 
@@ -18,12 +17,7 @@ class DefaultDatabase @Inject constructor(
         private val dialect: SQLDialect) : Database {
 
     override fun exec(fn: (DSLContext) -> Unit) {
-        val conn = try {
-            ds.connection
-        } catch(e: SQLException) {
-            throw DataException(e.message, e)
-        }
-
+        val conn = ds.connection
         try {
             fn(DSL.using(conn, dialect))
         } catch (e: DataAccessException) {
@@ -31,20 +25,15 @@ class DefaultDatabase @Inject constructor(
             // per https://www.postgresql.org/docs/9.3/static/errcodes-appendix.html
             when (e.sqlState()) {
                 "23505" -> throw UniquenessConstraintViolationException(e)
-                else -> throw DataException(e.message, e)
+                else -> throw e
             }
         } finally {
-            conn?.close()
+            conn.close()
         }
     }
 
     override fun <T> query(fn: (DSLContext) -> T): T {
-        val conn = try {
-            ds.connection
-        } catch (e: SQLException) {
-            throw DataException(e.message, e)
-        }
-
+        val conn = ds.connection
         try {
             return fn(DSL.using(conn, dialect))
         } catch(e: DataAccessException) {
@@ -52,10 +41,10 @@ class DefaultDatabase @Inject constructor(
             // per https://www.postgresql.org/docs/9.3/static/errcodes-appendix.html
             when (e.sqlState()) {
                 "23505" -> throw UniquenessConstraintViolationException(e)
-                else -> throw DataException(e.message, e)
+                else -> throw e
             }
         } finally {
-            conn?.close()
+            conn.close()
         }
     }
 }

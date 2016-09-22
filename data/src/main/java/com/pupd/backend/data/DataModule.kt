@@ -1,6 +1,8 @@
 package com.pupd.backend.data
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.AbstractModule
+import com.google.inject.Provides
 import com.pupd.backend.data.commands.CommandsModule
 import com.pupd.backend.data.postgres.PostgresDataSourceProvider
 import com.pupd.backend.data.queries.QueriesModule
@@ -21,5 +23,11 @@ class DataModule() : AbstractModule() {
         bind(SQLDialect::class.java).toInstance(SQLDialect.POSTGRES)
         bind(DataSource::class.java).toProvider(PostgresDataSourceProvider::class.java).`in`(Singleton::class.java)
         bind(Database::class.java).to(DefaultDatabase::class.java).`in`(Singleton::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun objectMapper(): ObjectMapper {
+        return ObjectMapper()
     }
 }

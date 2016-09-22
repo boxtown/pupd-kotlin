@@ -18,20 +18,15 @@ data class CreateExercise(var id: UUID? = null, var name: String = "") {
  *
  * Created by maxiaojun on 9/7/2016.
  */
-class CreateExerciseHandler @Inject constructor(private val db: Database) :
-        BaseCommandHandler<CreateExercise>(),
-        CommandHandler<CreateExercise> {
-
+class CreateExerciseHandler @Inject constructor(private val db: Database) : CommandHandler<CreateExercise> {
     override fun handle(command: CreateExercise): Result {
         if (command.id == null || command.name.length == 0) {
             return Result(Status.Nack, "Invalid command")
         }
 
-        return super.handle(command) { command ->
-            db.exec { ctx ->
-                ctx.insertInto(Tables.EXERCISES).values(command.id, command.name).execute()
-            }
-            Result()
+        db.exec { ctx ->
+            ctx.insertInto(Tables.EXERCISES).values(command.id, command.name).execute()
         }
+        return Result()
     }
 }

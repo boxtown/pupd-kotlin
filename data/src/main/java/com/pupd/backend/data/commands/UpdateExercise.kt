@@ -17,23 +17,17 @@ data class UpdateExercise(var id: UUID? = null, var name: String = "")
  *
  * Created by maxiaojun on 9/7/16.
  */
-class UpdateExerciseHandler @Inject constructor(private val db: Database) :
-        BaseCommandHandler<UpdateExercise>(),
-        CommandHandler<UpdateExercise> {
-
+class UpdateExerciseHandler @Inject constructor(private val db: Database) : CommandHandler<UpdateExercise> {
     override fun handle(command: UpdateExercise): Result {
         if (command.id == null || command.name.length == 0) {
             return Result(Status.Nack, "Invalid exercise")
         }
-
-        return super.handle(command) { command ->
-            db.exec { ctx ->
-                val record = ctx.newRecord(Tables.EXERCISES)
-                record.set(Tables.EXERCISES.ID, command.id)
-                record.set(Tables.EXERCISES.NAME, command.name)
-                record.update()
-            }
-            Result()
+        db.exec { ctx ->
+            val record = ctx.newRecord(Tables.EXERCISES)
+            record.set(Tables.EXERCISES.ID, command.id)
+            record.set(Tables.EXERCISES.NAME, command.name)
+            record.update()
         }
+        return Result()
     }
 }

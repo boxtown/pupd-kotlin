@@ -1,5 +1,6 @@
 package com.pupd.backend.data.queries
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.pupd.backend.data.Database
@@ -30,5 +31,6 @@ class QueriesModule() : AbstractModule() {
     @Singleton
     @Provides
     @Inject
-    fun getWorkoutHandler(db: Database): QueryHandler<GetWorkout, Workout?> = GetWorkoutHandler(db)
+    fun getWorkoutHandler(db: Database, mapper: ObjectMapper): QueryHandler<GetWorkout, Workout?>
+            = GetWorkoutHandler(db, mapper)
 }
