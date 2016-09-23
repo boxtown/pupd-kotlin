@@ -1,5 +1,6 @@
 package com.pupd.backend.data.entities
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.util.*
 
 /**
@@ -28,6 +29,7 @@ class Workout(
         var sets: Map<UUID, Array<WorkoutSet>> = mapOf(),
         var increments: Map<UUID, Double> = mapOf()) {
 
+    @get: JsonIgnore
     val isConsistent: Boolean
         get() {
             if (!exercises.all { e -> sets.containsKey(e.key) && increments.containsKey(e.key) }) {

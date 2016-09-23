@@ -7,7 +7,39 @@ import io.vertx.core.http.HttpMethod
 import java.util.concurrent.CompletableFuture
 
 /**
- * Extension syntatic sugar function for performing requests on Vertx HttpClients
+ * Wrapper function for HttpClient.doRequest(HttpMethod.GET, ...)
+ *
+ * @param cfg Request building logic
+ */
+fun <T> HttpClient.doGet(cfg: RequestBuilder<T>.() -> Unit): CompletableFuture<T>
+        = this.doRequest(HttpMethod.GET, cfg)
+
+/**
+ * Wrapper function for HttpClient.doRequest(HttpMethod.POST, ...)
+ *
+ * @param cfg Request building logic
+ */
+fun <T> HttpClient.doPost(cfg: RequestBuilder<T>.() -> Unit): CompletableFuture<T>
+        = this.doRequest(HttpMethod.POST, cfg)
+
+/**
+ * Wrapper function for HttpClient.doRequest(HttpMethod.PUT, ...)
+ *
+ * @param cfg Request building logic
+ */
+fun <T> HttpClient.doPut(cfg: RequestBuilder<T>.() -> Unit): CompletableFuture<T>
+        = this.doRequest(HttpMethod.PUT, cfg)
+
+/**
+ * Wrapper function for HttpClient.doRequest(HttpMethod.DELETE, ...)
+ *
+ * @param cfg Request building logic
+ */
+fun <T> HttpClient.doDelete(cfg: RequestBuilder<T>.() -> Unit): CompletableFuture<T>
+        = this.doRequest(HttpMethod.DELETE, cfg)
+
+/**
+ * Syntactic sugar function for performing requests on Vertx HttpClients
  * in a more Kotlin-builder-esque fashion
  *
  * @param method HTTP method for request
