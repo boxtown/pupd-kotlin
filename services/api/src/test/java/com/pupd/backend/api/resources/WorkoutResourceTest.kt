@@ -57,10 +57,15 @@ class WorkoutResourceTest {
                     ctx.assertTrue(workout.exercises.size == 3)
                     ctx.assertTrue(workout.sets.size == 3)
                     ctx.assertTrue(workout.increments.size == 3)
+
+                    val set1 = workout.sets.values.first()
+                    ctx.assertEquals(set1[0].reps, 5)
+                    ctx.assertEquals(set1[0].weight, 85.0)
                     async1.complete()
                 }
             }
-        }.exceptionally { e -> ctx.fail(e) }
+            errorHandler { t -> ctx.fail(t) }
+        }
 
         val async2 = ctx.async()
         client.doGet<Unit> {
@@ -71,9 +76,12 @@ class WorkoutResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 200)
                 resp.bodyHandler { body ->
+                    val workout = Json.decodeValue(body.toString(), Workout::class.java)
+                    ctx.assertEquals(workout.name, "Test Workout B")
                     async2.complete()
                 }
             }
-        }.exceptionally { e -> ctx.fail(e) }
+            errorHandler { t -> ctx.fail(t) }
+        }
     }
 }

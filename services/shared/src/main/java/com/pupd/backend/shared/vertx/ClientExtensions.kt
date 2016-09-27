@@ -51,12 +51,10 @@ fun <T> HttpClient.doRequest(method: HttpMethod, cfg: RequestBuilder<T>.() -> Un
 
     val promise = CompletableFuture<T>()
     val handler: (HttpClientResponse) -> Unit = { resp ->
-        try {
-            promise.complete(builder.handler(resp))
-        } catch (e: Exception) {
-            promise.completeExceptionally(e)
-        }
+        resp.exceptionHandler(builder.errorHandler)
+        promise.complete(builder.handler(resp))
     }
+
     val req = when (method) {
         HttpMethod.GET -> {
             this.get(builder.port, builder.host, builder.uri, handler)
@@ -72,6 +70,7 @@ fun <T> HttpClient.doRequest(method: HttpMethod, cfg: RequestBuilder<T>.() -> Un
         }
         else -> throw UnsupportedOperationException()
     }
+    req.exceptionHandler(builder.errorHandler)
 
     for ((k, v) in builder.headers) {
         req.putHeader(k, v)
@@ -116,14 +115,14 @@ class RequestBuilder<T> {
     /**
      * The request body
      */
-    var body: Buffer = Buffer.buffer()
+    internal var body: Buffer = Buffer.buffer()
         get
         private set
 
     /**
      * The relative URI. Built using the uri() method
      */
-    var uri = ""
+    internal var uri = ""
         get
         private set
 
@@ -136,7 +135,14 @@ class RequestBuilder<T> {
     /**
      * The response handler for the request
      */
-    var handler: (HttpClientResponse) -> T? = { null }
+    internal var handler: (HttpClientResponse) -> T? = { null }
+        get
+        private set
+
+    /**
+     * The error handler for both the request and the response
+     */
+    internal var errorHandler: (Throwable) -> Unit = { }
         get
         private set
 
@@ -178,6 +184,16 @@ class RequestBuilder<T> {
      */
     fun handler(h: (HttpClientResponse) -> T) {
         handler = h
+    }
+
+    /**
+     * Setter method for errorHandler. Allows setting of error handler
+     * without resorting to the object.property = syntax
+     *
+     * @param h Error handling function
+     */
+    fun errorHandler(h: (Throwable) -> Unit) {
+        errorHandler = h
     }
 }
 

@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS public.workout_exercises (
     id          UUID PRIMARY KEY,
     workout_id  UUID NOT NULL,
     exercise_id UUID NOT NULL,
-    sets        TEXT NOT NULL, -- using text to play nicely with jOOQ
+    sets        TEXT NOT NULL, -- using text to play nicely with jOOQ but should be JSON
     incr        DOUBLE PRECISION NOT NULL,
     FOREIGN KEY (workout_id) REFERENCES public.workouts (id)
         ON UPDATE CASCADE

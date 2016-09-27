@@ -55,7 +55,8 @@ class ExerciseResourceTest {
                     async.complete()
                 }
             }
-        }.exceptionally { e -> ctx.fail(e) }
+            errorHandler { t -> ctx.fail(t) }
+        }
     }
 
     @Test
@@ -91,7 +92,8 @@ class ExerciseResourceTest {
                     async1.complete()
                 }
             }
-        }.exceptionally { e -> ctx.fail(e) }
+            errorHandler { t -> ctx.fail(t) }
+        }
 
         // test offset
         val async2 = ctx.async()
@@ -109,7 +111,8 @@ class ExerciseResourceTest {
                     async2.complete()
                 }
             }
-        }.exceptionally { e -> ctx.fail(e) }
+            errorHandler { t -> ctx.fail(t) }
+        }
 
         // test limit
         val async3 = ctx.async()
@@ -127,7 +130,8 @@ class ExerciseResourceTest {
                     async3.complete()
                 }
             }
-        }.exceptionally { e -> ctx.fail(e) }
+            errorHandler { t -> ctx.fail(t) }
+        }
 
         // test sort by
         val async4 = ctx.async()
@@ -145,7 +149,8 @@ class ExerciseResourceTest {
                     async4.complete()
                 }
             }
-        }.exceptionally { e -> ctx.fail(e) }
+            errorHandler { t -> ctx.fail(t) }
+        }
 
         // test desc
         val async5 = ctx.async()
@@ -163,7 +168,8 @@ class ExerciseResourceTest {
                     async5.complete()
                 }
             }
-        }.exceptionally { e -> ctx.fail(e) }
+            errorHandler { t -> ctx.fail(t) }
+        }
 
         // test combo
         val async6 = ctx.async()
@@ -184,7 +190,8 @@ class ExerciseResourceTest {
                     async6.complete()
                 }
             }
-        }.exceptionally { e -> ctx.fail(e) }
+            errorHandler { t -> ctx.fail(t) }
+        }
     }
 
     @Test
@@ -207,6 +214,7 @@ class ExerciseResourceTest {
                 async.complete()
                 resp.headers()["location"].substringAfterLast('/')
             }
+            errorHandler { t -> ctx.fail(t) }
         }.thenCompose { id ->
             async = ctx.async()
             client.doGet<Unit> {
@@ -222,8 +230,9 @@ class ExerciseResourceTest {
                         async.complete()
                     }
                 }
+                errorHandler { t -> ctx.fail(t) }
             }
-        }.exceptionally { e -> ctx.fail(e) }
+        }
     }
 
     @Test
@@ -242,6 +251,7 @@ class ExerciseResourceTest {
                 // TODO: check error code body
                 async1.complete()
             }
+            errorHandler { t -> ctx.fail(t) }
         }
 
         // test bad name
@@ -261,6 +271,7 @@ class ExerciseResourceTest {
                 // TODO: check error code body
                 async2.complete()
             }
+            errorHandler { t -> ctx.fail(t) }
         }
     }
 
@@ -282,6 +293,7 @@ class ExerciseResourceTest {
                 ctx.assertEquals(resp.statusCode(), 202)
                 async1.complete()
             }
+            errorHandler { t -> ctx.fail(t) }
         }.thenCompose {
             async1 = ctx.async()
             client.doGet<Unit> {
@@ -297,8 +309,9 @@ class ExerciseResourceTest {
                         async1.complete()
                     }
                 }
+                errorHandler { t -> ctx.fail(t) }
             }
-        }.exceptionally { e -> ctx.fail(e) }
+        }
 
         // test idempotency
         val async2 = ctx.async()
@@ -317,7 +330,8 @@ class ExerciseResourceTest {
                 ctx.assertEquals(resp.statusCode(), 202)
                 async2.complete()
             }
-        }.exceptionally { e -> ctx.fail(e) }
+            errorHandler { t -> ctx.fail(t) }
+        }
     }
 
     @Test
@@ -339,6 +353,7 @@ class ExerciseResourceTest {
                 ctx.assertEquals(resp.statusCode(), 400)
                 async.complete()
             }
+            errorHandler { t -> ctx.fail(t) }
         }
     }
 
@@ -354,6 +369,7 @@ class ExerciseResourceTest {
                 ctx.assertEquals(resp.statusCode(), 202)
                 async.complete()
             }
+            errorHandler { t -> ctx.fail(t) }
         }.thenCompose {
             async = ctx.async()
             client.doGet<Unit> {
@@ -365,6 +381,7 @@ class ExerciseResourceTest {
                     ctx.assertEquals(resp.statusCode(), 404)
                     async.complete()
                 }
+                errorHandler { t -> ctx.fail(t) }
             }
         }.thenCompose {
             // test idempotency
@@ -378,7 +395,8 @@ class ExerciseResourceTest {
                     ctx.assertEquals(resp.statusCode(), 202)
                     async.complete()
                 }
+                errorHandler { t -> ctx.fail(t) }
             }
-        }.exceptionally { e -> ctx.fail(e) }
+        }
     }
 }
