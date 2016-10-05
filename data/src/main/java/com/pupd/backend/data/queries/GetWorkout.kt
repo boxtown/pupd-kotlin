@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.pupd.backend.data.Database
 import com.pupd.backend.data.entities.Exercise
 import com.pupd.backend.data.entities.Workout
+import com.pupd.backend.data.entities.WorkoutExercise
 import com.pupd.backend.data.entities.WorkoutSet
 import com.pupd.backend.data.generated.Tables
 import com.pupd.backend.data.generated.tables.records.ExercisesRecord
@@ -28,23 +29,25 @@ class GetWorkoutHandler @Inject constructor(private val db: Database, private va
                     .where(Tables.WORKOUTS.ID.equal(query.id))
                     .fetchOne()?.into(Workout::class.java) ?: return@query null
 
-            val exercises: MutableMap<UUID, Exercise> = mutableMapOf()
-            val sets: MutableMap<UUID, Array<WorkoutSet>> = mutableMapOf()
-            val increments: MutableMap<UUID, Double> = mutableMapOf()
-            ctx.select().from(Tables.WORKOUT_EXERCISES).join(Tables.EXERCISES).onKey().fetch()
+            val exercises: MutableMap<UUID, WorkoutExercise> = mutableMapOf()
+            ctx.select()
+                    .from(Tables.WORKOUT_EXERCISES)
+                    .join(Tables.EXERCISES).onKey()
+                    .where(Tables.WORKOUT_EXERCISES.WORKOUT_ID.equal(query.id))
+                    .fetch()
                     .map { record ->
                         record.into(WorkoutExercisesRecord::class.java) to record.into(ExercisesRecord::class.java)
                     }
                     .forEach { pair ->
-                        exercises.put(pair.second.id, Exercise(pair.second.id, pair.second.name))
-                        sets.put(pair.second.id, mapper.readValue(pair.first.sets,
-                                                                  object : TypeReference<Array<WorkoutSet>>() {}))
-                        increments.put(pair.second.id, pair.first.incr)
+                        val typeRef = object : TypeReference<List<WorkoutSet>>() {}
+                        exercises.put(pair.first.exerciseId, WorkoutExercise(
+                                pair.second.into(Exercise::class.java),
+                                mapper.readValue(pair.first.sets, typeRef),
+                                pair.first.incr
+                        ))
                     }
 
             workout.exercises = exercises
-            workout.sets = sets
-            workout.increments = increments
             workout
         }
     }

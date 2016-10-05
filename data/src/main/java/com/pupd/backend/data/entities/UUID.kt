@@ -5,7 +5,7 @@ import java.util.*
 /**
  * Utility class for UUID
  *
- * Created on 10/4/2016
+ * Created by maxiaojun on 10/4/16
  */
 class EmptyUUID {
     companion object {
