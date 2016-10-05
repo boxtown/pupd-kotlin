@@ -1,5 +1,6 @@
 package com.pupd.backend.api
 
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.inject.Guice
 import com.google.inject.Injector
 import com.pupd.backend.api.resources.ExerciseResource
@@ -21,6 +22,7 @@ class ApiVerticle(private var injector: Injector? = null) : AbstractVerticle() {
         if (injector == null) {
             injector = Guice.createInjector(ResourceModule(vertx))
         }
+        Json.mapper.registerModule(KotlinModule())
         Json.mapper.registerResourceModule()
 
         val router = Router.router(vertx)

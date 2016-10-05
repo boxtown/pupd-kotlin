@@ -8,14 +8,14 @@ import java.util.*
  *
  * Created by maxiaojun on 8/31/16.
  */
-data class Exercise(var id: UUID? = null, var name: String = "")
+data class Exercise(var id: UUID = EmptyUUID.INSTANCE, var name: String = "")
 
 /**
  * Workout set entity data class
  *
  * Created by maxiaojun on 9/21/16.
  */
-data class WorkoutSet(var reps: Int = 0, var weight: Double = 0.0)
+data class WorkoutSet(var reps: Int, var weight: Double)
 
 /**
  * Workout entity class
@@ -23,7 +23,7 @@ data class WorkoutSet(var reps: Int = 0, var weight: Double = 0.0)
  * Created by maxiaojun on 8/31/16.
  */
 class Workout(
-        var id: UUID? = null,
+        var id: UUID = EmptyUUID.INSTANCE,
         var name: String = "",
         var exercises: Map<UUID, Exercise> = mapOf(),
         var sets: Map<UUID, Array<WorkoutSet>> = mapOf(),
@@ -44,11 +44,11 @@ class Workout(
  *
  * Created by maxiaojun on 8/31/16.
  */
-class Cycle(var workout: Workout? = null, var reps: Int = 0, var offset: Int = 0, var lengthInDays: Int = 0)
+class Cycle(var workout: Workout, var reps: Int, var offset: Int, var lengthInDays: Int)
 
 /**
  * Workout program entity class
  *
  * Created by maxiaojun on 8/31/16.
  */
-class Program(var id: UUID? = null, var name: String = "", var cycles: Array<Cycle> = arrayOf())
+class Program(var id: UUID = EmptyUUID.INSTANCE, var name: String = "", var cycles: Array<Cycle> = arrayOf())

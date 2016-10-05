@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # This script requires PGPASSWORD environment variable to be set to run
 {
   "${PGPASSWORD?Need to set PGPASSWORD env var}"

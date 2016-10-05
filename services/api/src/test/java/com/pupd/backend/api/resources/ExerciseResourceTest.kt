@@ -5,7 +5,6 @@ import com.pupd.backend.data.entities.Exercise
 import com.pupd.backend.shared.vertx.*
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpClient
-import io.vertx.core.http.HttpMethod
 import io.vertx.core.json.Json
 import io.vertx.ext.unit.TestContext
 import io.vertx.ext.unit.junit.VertxUnitRunner
