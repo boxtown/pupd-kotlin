@@ -89,8 +89,12 @@ class ExerciseResourceTest {
                 resp.bodyHandler { body ->
                     val array = body.toJsonArray()
                     ctx.assertEquals(array.size(), 3)
-                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise A")
-                    ctx.assertEquals(array.getJsonObject(2).getString("name"), "Test Exercise B")
+                    arrayOf("Test Exercise A",
+                            "Test Exercise C",
+                            "Test Exercise B")
+                            .forEachIndexed { i, s ->
+                                ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
+                            }
                 }
             }
             errorHandler { t ->
@@ -114,7 +118,9 @@ class ExerciseResourceTest {
                 resp.bodyHandler { body ->
                     val array = body.toJsonArray()
                     ctx.assertEquals(array.size(), 2)
-                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise C")
+                    arrayOf("Test Exercise C", "Test Exercise B").forEachIndexed { i, s ->
+                        ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
+                    }
                 }
             }
             errorHandler { t ->
@@ -162,7 +168,12 @@ class ExerciseResourceTest {
                 resp.bodyHandler { body ->
                     val array = body.toJsonArray()
                     ctx.assertEquals(array.size(), 3)
-                    ctx.assertEquals(array.getJsonObject(1).getString("name"), "Test Exercise B")
+                    arrayOf("Test Exercise A",
+                            "Test Exercise B",
+                            "Test Exercise C")
+                    .forEachIndexed { i, s ->
+                        ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
+                    }
                 }
             }
             errorHandler { t ->
@@ -186,7 +197,12 @@ class ExerciseResourceTest {
                 resp.bodyHandler { body ->
                     val array = body.toJsonArray()
                     ctx.assertEquals(array.size(), 3)
-                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise B")
+                    arrayOf("Test Exercise B",
+                            "Test Exercise C",
+                            "Test Exercise A")
+                            .forEachIndexed { i, s ->
+                                ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
+                            }
                 }
             }
             errorHandler { t ->

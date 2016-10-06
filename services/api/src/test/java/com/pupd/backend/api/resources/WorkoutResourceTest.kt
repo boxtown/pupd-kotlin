@@ -55,32 +55,29 @@ class WorkoutResourceTest {
                 resp.bodyHandler { body ->
                     val workout = Json.decodeValue(body.toString(), Workout::class.java)
                     ctx.assertEquals(workout.name, "Test Workout A")
-                    ctx.assertTrue(workout.exercises.size == 2)
+                    ctx.assertEquals(workout.exercises.size, 2)
 
-                    val exercise = workout.exercises[UUID.fromString("00000000-0000-4000-8000-000000000001")]
+                    var exercise = workout.exercises[UUID.fromString("00000000-0000-4000-8000-000000000001")]
                     ctx.assertEquals(exercise?.exercise?.name, "Test Exercise A")
-                    ctx.assertEquals(exercise?.sets?.first()?.reps, 5)
-                    ctx.assertEquals(exercise?.sets?.first()?.weight, 85.0)
+                    ctx.assertEquals(exercise?.sets?.size, 3)
+                    arrayOf(5 to 85.0, 5 to 95.0, 5 to 100.0).forEachIndexed { i, pair ->
+                        val set = exercise?.sets?.get(i)
+                        ctx.assertEquals(set?.reps, pair.first)
+                        ctx.assertEquals(set?.weight, pair.second)
+                    }
+                    ctx.assertEquals(exercise?.increment, 5.0)
+
+
+                    exercise = workout.exercises[UUID.fromString("00000000-0000-4000-8000-000000000002")]
+                    ctx.assertEquals(exercise?.exercise?.name, "Test Exercise C")
+                    ctx.assertEquals(exercise?.sets?.size, 1)
+                    val set = exercise?.sets?.first()
+                    ctx.assertEquals(set?.reps, 5)
+                    ctx.assertEquals(set?.weight, 65.0)
+                    ctx.assertEquals(exercise?.increment, 10.0)
                 }
             }
             errorHandler { t -> ctx.fail(t) }
-        }.thenCompose {
-            client.doGet<Unit> {
-                uri {
-                    path("workout")
-                    path("00000000-0000-4000-8000-000000000003")
-                }
-                handler { resp ->
-                    ctx.assertEquals(resp.statusCode(), 200)
-                    resp.bodyHandler { body ->
-                        val workout = Json.decodeValue(body.toString(), Workout::class.java)
-                        ctx.assertEquals(workout.name, "Test Workout B")
-                    }
-                }
-                errorHandler { t ->
-                    ctx.fail(t)
-                }
-            }
         }.thenRun {
             async.complete()
         }
