@@ -3,6 +3,7 @@ package com.pupd.backend.api.resources
 import com.google.inject.AbstractModule
 import com.pupd.backend.data.TestDataModule
 import io.vertx.core.Vertx
+import io.vertx.core.json.Json
 import javax.inject.Singleton
 
 /**
@@ -12,7 +13,7 @@ import javax.inject.Singleton
  */
 class TestResourceModule(private val vertx: Vertx) : AbstractModule() {
     override fun configure() {
-        install(TestDataModule())
+        install(TestDataModule(Json.mapper))
 
         bind(Vertx::class.java).toInstance(vertx)
         bind(ExerciseResource::class.java).`in`(Singleton::class.java)

@@ -1,6 +1,7 @@
 package com.pupd.backend.data
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.inject.AbstractModule
 import com.google.inject.Provides
 import com.pupd.backend.data.commands.CommandsModule
@@ -15,7 +16,11 @@ import javax.sql.DataSource
  *
  * Created by maxiaojun on 9/1/16.
  */
-class DataModule() : AbstractModule() {
+open class DataModule(val mapper: ObjectMapper) : AbstractModule() {
+    init {
+        mapper.registerModule(KotlinModule())
+    }
+
     override fun configure() {
         install(CommandsModule())
         install(QueriesModule())
@@ -28,6 +33,6 @@ class DataModule() : AbstractModule() {
     @Singleton
     @Provides
     fun objectMapper(): ObjectMapper {
-        return ObjectMapper()
+        return mapper
     }
 }

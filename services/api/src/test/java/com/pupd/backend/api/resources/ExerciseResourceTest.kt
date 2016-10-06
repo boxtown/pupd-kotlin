@@ -51,10 +51,13 @@ class ExerciseResourceTest {
                 resp.bodyHandler { body ->
                     val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
                     ctx.assertEquals(exercise?.name, "Test Exercise A")
-                    async.complete()
                 }
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
+        }.thenRun {
+            async.complete()
         }
     }
 
@@ -68,15 +71,15 @@ class ExerciseResourceTest {
             }
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 404)
-                async.complete()
             }
+        }.thenRun {
+            async.complete()
         }
     }
 
     @Test
-    fun testListExercises(ctx: TestContext) {
-        // test default
-        val async1 = ctx.async()
+    fun testListExercisesWithNoArguments(ctx: TestContext) {
+        val async = ctx.async()
         client.doGet<Unit> {
             uri {
                 path("exercises")
@@ -88,14 +91,19 @@ class ExerciseResourceTest {
                     ctx.assertEquals(array.size(), 3)
                     ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise A")
                     ctx.assertEquals(array.getJsonObject(2).getString("name"), "Test Exercise B")
-                    async1.complete()
                 }
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
+        }.thenRun {
+            async.complete()
         }
+    }
 
-        // test offset
-        val async2 = ctx.async()
+    @Test
+    fun testListExercisesWithOffset(ctx: TestContext) {
+        val async = ctx.async()
         client.doGet<Unit> {
             uri {
                 path("exercises")
@@ -107,14 +115,19 @@ class ExerciseResourceTest {
                     val array = body.toJsonArray()
                     ctx.assertEquals(array.size(), 2)
                     ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise C")
-                    async2.complete()
                 }
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
+        }.thenRun {
+            async.complete()
         }
+    }
 
-        // test limit
-        val async3 = ctx.async()
+    @Test
+    fun testListExercisesWithLimit(ctx: TestContext) {
+        val async = ctx.async()
         client.doGet<Unit> {
             uri {
                 path("exercises")
@@ -126,14 +139,19 @@ class ExerciseResourceTest {
                     val array = body.toJsonArray()
                     ctx.assertEquals(array.size(), 1)
                     ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise A")
-                    async3.complete()
                 }
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
+        }.thenRun {
+            async.complete()
         }
+    }
 
-        // test sort by
-        val async4 = ctx.async()
+    @Test
+    fun testListExercisesWithSorting(ctx: TestContext) {
+        val async = ctx.async()
         client.doGet<Unit> {
             uri {
                 path("exercises")
@@ -145,14 +163,19 @@ class ExerciseResourceTest {
                     val array = body.toJsonArray()
                     ctx.assertEquals(array.size(), 3)
                     ctx.assertEquals(array.getJsonObject(1).getString("name"), "Test Exercise B")
-                    async4.complete()
                 }
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
+        }.thenRun {
+            async.complete()
         }
+    }
 
-        // test desc
-        val async5 = ctx.async()
+    @Test
+    fun testListExercisesInDescendingOrder(ctx: TestContext) {
+        val async = ctx.async()
         client.doGet<Unit> {
             uri {
                 path("exercises")
@@ -164,14 +187,19 @@ class ExerciseResourceTest {
                     val array = body.toJsonArray()
                     ctx.assertEquals(array.size(), 3)
                     ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise B")
-                    async5.complete()
                 }
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
+        }.thenRun {
+            async.complete()
         }
+    }
 
-        // test combo
-        val async6 = ctx.async()
+    @Test
+    fun testListExercises(ctx: TestContext) {
+        val async = ctx.async()
         client.doGet<Unit> {
             uri {
                 path("exercises")
@@ -186,16 +214,19 @@ class ExerciseResourceTest {
                     val array = body.toJsonArray()
                     ctx.assertEquals(array.size(), 1)
                     ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise B")
-                    async6.complete()
                 }
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
+        }.thenRun {
+            async.complete()
         }
     }
 
     @Test
     fun testCreateExercise(ctx: TestContext) {
-        var async = ctx.async()
+        val async = ctx.async()
         client.doPost<String> {
             uri {
                 path("exercise")
@@ -209,13 +240,12 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 201)
                 ctx.assertTrue(resp.headers()["location"].length > 0)
-
-                async.complete()
                 resp.headers()["location"].substringAfterLast('/')
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
         }.thenCompose { id ->
-            async = ctx.async()
             client.doGet<Unit> {
                 uri {
                     path("exercise")
@@ -226,18 +256,20 @@ class ExerciseResourceTest {
                     resp.bodyHandler { body ->
                         val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
                         ctx.assertEquals(exercise?.name, "New Exercise")
-                        async.complete()
                     }
                 }
-                errorHandler { t -> ctx.fail(t) }
+                errorHandler { t ->
+                    ctx.fail(t)
+                }
             }
+        }.thenRun {
+            async.complete()
         }
     }
 
     @Test
-    fun testCreateBadExercise(ctx: TestContext) {
-        // test no body
-        val async1 = ctx.async()
+    fun testCreateExerciseWithNoBody(ctx: TestContext) {
+        val async = ctx.async()
         client.doPost<Unit> {
             uri {
                 path("exercise")
@@ -248,13 +280,18 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 400)
                 // TODO: check error code body
-                async1.complete()
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
+        }.thenRun {
+            async.complete()
         }
+    }
 
-        // test bad name
-        val async2 = ctx.async()
+    @Test
+    fun testCreateExerciseWithBadName(ctx: TestContext) {
+        val async = ctx.async()
         client.doPost<Unit> {
             uri {
                 path("exercise")
@@ -268,15 +305,18 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 400)
                 // TODO: check error code body
-                async2.complete()
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
+        }.thenRun {
+            async.complete()
         }
     }
 
     @Test
     fun testUpdateExercise(ctx: TestContext) {
-        var async1 = ctx.async()
+        val async = ctx.async()
         client.doPut<Unit> {
             uri {
                 path("exercise")
@@ -290,11 +330,11 @@ class ExerciseResourceTest {
             }
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 202)
-                async1.complete()
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
         }.thenCompose {
-            async1 = ctx.async()
             client.doGet<Unit> {
                 uri {
                     path("exercise")
@@ -305,15 +345,20 @@ class ExerciseResourceTest {
                     resp.bodyHandler { body ->
                         val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
                         ctx.assertEquals(exercise?.name, "Updated Exercise")
-                        async1.complete()
                     }
                 }
-                errorHandler { t -> ctx.fail(t) }
+                errorHandler { t ->
+                    ctx.fail(t)
+                }
             }
+        }.thenRun {
+            async.complete()
         }
+    }
 
-        // test idempotency
-        val async2 = ctx.async()
+    @Test
+    fun testUpdateExerciseIsIdempotent(ctx: TestContext) {
+        val async = ctx.async()
         client.doPut<Unit> {
             uri {
                 path("exercise")
@@ -327,15 +372,17 @@ class ExerciseResourceTest {
             }
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 202)
-                async2.complete()
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
+        }.thenRun {
+            async.complete()
         }
     }
 
     @Test
-    fun testUpdateBadExercise(ctx: TestContext) {
-        // test invalid exercise name
+    fun testUpdateExerciseWithBadName(ctx: TestContext) {
         val async = ctx.async()
         client.doPut<Unit> {
             uri {
@@ -350,15 +397,18 @@ class ExerciseResourceTest {
             }
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 400)
-                async.complete()
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
+        }.thenRun {
+            async.complete()
         }
     }
 
     @Test
     fun testDeleteExercise(ctx: TestContext) {
-        var async = ctx.async()
+        val async = ctx.async()
         client.doDelete<Unit> {
             uri {
                 path("exercise")
@@ -366,11 +416,11 @@ class ExerciseResourceTest {
             }
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 202)
-                async.complete()
             }
-            errorHandler { t -> ctx.fail(t) }
+            errorHandler { t ->
+                ctx.fail(t)
+            }
         }.thenCompose {
-            async = ctx.async()
             client.doGet<Unit> {
                 uri {
                     path("exercise")
@@ -378,13 +428,28 @@ class ExerciseResourceTest {
                 }
                 handler { resp ->
                     ctx.assertEquals(resp.statusCode(), 404)
-                    async.complete()
                 }
-                errorHandler { t -> ctx.fail(t) }
+                errorHandler { t ->
+                    ctx.fail(t)
+                }
+            }
+        }.thenRun {
+            async.complete()
+        }
+    }
+
+    @Test
+    fun testDeleteExerciseIsIdempotent(ctx: TestContext) {
+        val async = ctx.async()
+        client.doDelete<Unit> {
+            uri {
+                path("exercise")
+                path("00000000-0000-4000-8000-000000000001")
+            }
+            errorHandler { t ->
+                ctx.fail(t)
             }
         }.thenCompose {
-            // test idempotency
-            async = ctx.async()
             client.doDelete<Unit> {
                 uri {
                     path("exercise")
@@ -392,10 +457,13 @@ class ExerciseResourceTest {
                 }
                 handler { resp ->
                     ctx.assertEquals(resp.statusCode(), 202)
-                    async.complete()
                 }
-                errorHandler { t -> ctx.fail(t) }
+                errorHandler { t ->
+                    ctx.fail(t)
+                }
             }
+        }.thenRun {
+            async.complete()
         }
     }
 }

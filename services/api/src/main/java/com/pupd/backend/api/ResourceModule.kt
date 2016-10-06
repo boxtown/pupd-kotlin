@@ -8,6 +8,7 @@ import com.pupd.backend.data.DataModule
 import com.pupd.backend.data.postgres.PostgresDataSourceProvider
 import com.pupd.backend.shared.EnvironmentType
 import io.vertx.core.Vertx
+import io.vertx.core.json.Json
 import javax.inject.Singleton
 
 /**
@@ -19,7 +20,7 @@ class ResourceModule(private val vertx: Vertx) : AbstractModule() {
     private val env = System.getenv()
 
     override fun configure() {
-        install(DataModule())
+        install(DataModule(Json.mapper))
 
         val environmentType = EnvironmentType.fromString(env[Environment.ENVIRONMENT] ?: "")
         when (environmentType) {

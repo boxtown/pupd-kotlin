@@ -1,6 +1,6 @@
 package com.pupd.backend.data
 
-import com.google.inject.AbstractModule
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.pupd.backend.data.commands.CommandsModule
 import com.pupd.backend.data.h2.H2DataSourceProvider
 import com.pupd.backend.data.queries.QueriesModule
@@ -13,7 +13,7 @@ import javax.sql.DataSource
  *
  * Created by maxiaojun on 9/12/16.
  */
-class TestDataModule : AbstractModule() {
+class TestDataModule(mapper: ObjectMapper) : DataModule(mapper) {
     override fun configure() {
         install(CommandsModule())
         install(QueriesModule())

@@ -12,6 +12,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.*
 
 /**
  * Workout resource test class
@@ -43,7 +44,7 @@ class WorkoutResourceTest {
 
     @Test
     fun testGetWorkout(ctx: TestContext) {
-        val async1 = ctx.async()
+        val async = ctx.async()
         client.doGet<Unit> {
             uri {
                 path("workout")
@@ -54,34 +55,34 @@ class WorkoutResourceTest {
                 resp.bodyHandler { body ->
                     val workout = Json.decodeValue(body.toString(), Workout::class.java)
                     ctx.assertEquals(workout.name, "Test Workout A")
-                    ctx.assertTrue(workout.exercises.size == 3)
-                    ctx.assertTrue(workout.sets.size == 3)
-                    ctx.assertTrue(workout.increments.size == 3)
+                    ctx.assertTrue(workout.exercises.size == 2)
 
-                    val set1 = workout.sets.values.first()
-                    ctx.assertEquals(set1[0].reps, 5)
-                    ctx.assertEquals(set1[0].weight, 85.0)
-                    async1.complete()
+                    val exercise = workout.exercises[UUID.fromString("00000000-0000-4000-8000-000000000001")]
+                    ctx.assertEquals(exercise?.exercise?.name, "Test Exercise A")
+                    ctx.assertEquals(exercise?.sets?.first()?.reps, 5)
+                    ctx.assertEquals(exercise?.sets?.first()?.weight, 85.0)
                 }
             }
             errorHandler { t -> ctx.fail(t) }
-        }
-
-        val async2 = ctx.async()
-        client.doGet<Unit> {
-            uri {
-                path("workout")
-                path("00000000-0000-4000-8000-000000000003")
-            }
-            handler { resp ->
-                ctx.assertEquals(resp.statusCode(), 200)
-                resp.bodyHandler { body ->
-                    val workout = Json.decodeValue(body.toString(), Workout::class.java)
-                    ctx.assertEquals(workout.name, "Test Workout B")
-                    async2.complete()
+        }.thenCompose {
+            client.doGet<Unit> {
+                uri {
+                    path("workout")
+                    path("00000000-0000-4000-8000-000000000003")
+                }
+                handler { resp ->
+                    ctx.assertEquals(resp.statusCode(), 200)
+                    resp.bodyHandler { body ->
+                        val workout = Json.decodeValue(body.toString(), Workout::class.java)
+                        ctx.assertEquals(workout.name, "Test Workout B")
+                    }
+                }
+                errorHandler { t ->
+                    ctx.fail(t)
                 }
             }
-            errorHandler { t -> ctx.fail(t) }
+        }.thenRun {
+            async.complete()
         }
     }
 }
