@@ -7,25 +7,26 @@ import java.util.*
 import javax.inject.Singleton
 
 /**
- * Guice DI queries module for testing
+ * Guice DI exercise queries module for testing
  *
  * Created by maxiaojun on 10/6/16.
  */
 class TestExerciseQueriesModule : AbstractModule() {
-    val ids = arrayOf(
+    private val ids: Array<UUID> = arrayOf(
             UUID.fromString("00000000-0000-4000-8000-000000000001"),
             UUID.fromString("00000000-0000-4000-8000-000000000002"),
             UUID.fromString("00000000-0000-4000-8000-000000000003")
     )
-    val dataSource = mapOf(
+    private val dataSource: Map<UUID, Exercise> = mapOf(
             ids[0] to Exercise(ids[0], "Test Exercise A"),
             ids[1] to Exercise(ids[1], "Test Exercise C"),
-            ids[2] to Exercise(ids[2], "Test Exercose B")
+            ids[2] to Exercise(ids[2], "Test Exercise B")
     )
 
     override fun configure() {
     }
 
+    @Suppress("UNUSED")
     @Singleton
     @Provides
     fun mockGetExerciseHandler(): QueryHandler<GetExercise, Exercise?> =
@@ -33,6 +34,7 @@ class TestExerciseQueriesModule : AbstractModule() {
                 override fun handle(query: GetExercise): Exercise? = dataSource[query.id]
             }
 
+    @Suppress("UNUSED")
     @Singleton
     @Provides
     fun mockGetListExercisesHandler(): QueryHandler<ListExercises, Iterable<Exercise>> =

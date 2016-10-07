@@ -27,13 +27,7 @@ class WorkoutResourceTest {
     @Before
     fun setUp(ctx: TestContext) {
         vertx = Vertx.vertx()
-        vertx.deployTestEnvironment(
-                ctx,
-                "src/test/resources/sql/setup_exercise_test.sql",
-                "src/test/resources/sql/setup_workout_test.sql")
-        { injector ->
-            ApiVerticle(injector)
-        }
+        vertx.deployTestEnvironment(ctx) { injector -> ApiVerticle(injector) }
         client = vertx.createHttpClient()
     }
 

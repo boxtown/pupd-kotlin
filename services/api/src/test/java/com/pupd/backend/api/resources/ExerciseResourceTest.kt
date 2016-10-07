@@ -26,10 +26,7 @@ class ExerciseResourceTest {
     @Before
     fun setUp(ctx: TestContext) {
         vertx = Vertx.vertx()
-        vertx.deployTestEnvironment(ctx, "src/test/resources/sql/setup_exercise_test.sql") {
-            injector ->
-            ApiVerticle(injector)
-        }
+        vertx.deployTestEnvironment(ctx) { injector -> ApiVerticle(injector) }
         client = vertx.createHttpClient()
     }
 
@@ -261,23 +258,6 @@ class ExerciseResourceTest {
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenCompose { id ->
-            client.doGet<Unit> {
-                uri {
-                    path("exercise")
-                    path(id)
-                }
-                handler { resp ->
-                    ctx.assertEquals(resp.statusCode(), 200)
-                    resp.bodyHandler { body ->
-                        val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
-                        ctx.assertEquals(exercise?.name, "New Exercise")
-                    }
-                }
-                errorHandler { t ->
-                    ctx.fail(t)
-                }
-            }
         }.thenRun {
             async.complete()
         }
@@ -350,23 +330,6 @@ class ExerciseResourceTest {
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenCompose {
-            client.doGet<Unit> {
-                uri {
-                    path("exercise")
-                    path("00000000-0000-4000-8000-000000000001")
-                }
-                handler { resp ->
-                    ctx.assertEquals(resp.statusCode(), 200)
-                    resp.bodyHandler { body ->
-                        val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
-                        ctx.assertEquals(exercise?.name, "Updated Exercise")
-                    }
-                }
-                errorHandler { t ->
-                    ctx.fail(t)
-                }
-            }
         }.thenRun {
             async.complete()
         }
@@ -435,19 +398,6 @@ class ExerciseResourceTest {
             }
             errorHandler { t ->
                 ctx.fail(t)
-            }
-        }.thenCompose {
-            client.doGet<Unit> {
-                uri {
-                    path("exercise")
-                    path("00000000-0000-4000-8000-000000000001")
-                }
-                handler { resp ->
-                    ctx.assertEquals(resp.statusCode(), 404)
-                }
-                errorHandler { t ->
-                    ctx.fail(t)
-                }
             }
         }.thenRun {
             async.complete()

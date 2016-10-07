@@ -7,7 +7,7 @@ import java.util.*
  *
  * Created by maxiaojun on 8/31/16.
  */
-data class Exercise(var id: UUID = EmptyUUID.INSTANCE, var name: String = "")
+data class Exercise(var id: UUID? = null, var name: String = "")
 
 /**
  * Workout set entity data class
@@ -31,7 +31,7 @@ data class WorkoutExercise(
  * Created by maxiaojun on 8/31/16.
  */
 data class Workout(
-        var id: UUID = EmptyUUID.INSTANCE,
+        var id: UUID? = null,
         var name: String = "",
         var exercises: Map<UUID, WorkoutExercise> = mapOf())
 
@@ -52,6 +52,6 @@ data class Cycle(
  * Created by maxiaojun on 8/31/16.
  */
 data class Program(
-        var id: UUID = EmptyUUID.INSTANCE,
+        var id: UUID? = null,
         var name: String = "",
         var cycles: List<Cycle> = listOf())

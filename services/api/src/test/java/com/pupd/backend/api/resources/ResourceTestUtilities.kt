@@ -21,39 +21,9 @@ import javax.sql.DataSource
  * and runs the provided H2 SQL init scripts
  *
  * @param ctx The Vertx runner testing context
- * @param scriptPaths Relative paths to H2 SQL Scripts to run on init
  * @param verticleProvider Provides a verticle given a Guice injector for dependencies
  */
-internal fun Vertx.deployTestEnvironment(
-        ctx: TestContext,
-        vararg scriptPaths: String,
-        verticleProvider: (Injector) -> AbstractVerticle) {
-
+internal fun Vertx.deployTestEnvironment(ctx: TestContext, verticleProvider: (Injector) -> AbstractVerticle) {
     val injector = Guice.createInjector(TestResourceModule(this))
-    this.deployVerticle(
-            verticleProvider(injector),
-            ctx.asyncAssertSuccess())
-
-    val ds = injector.getInstance(DataSource::class.java)
-    ds.runSetupScripts(*scriptPaths)
-}
-
-/**
- * Runs a series of scripts identified by scriptPaths on the DataSource.
- * Scripts must be SQL scripts with valid H2 syntax.
- *
- * @param scriptPaths Relative paths to SQL scripts
- */
-internal fun DataSource.runSetupScripts(vararg scriptPaths: String) {
-    var conn: Connection? = null
-    try {
-        conn = this.connection
-        scriptPaths.forEach { path ->
-            FileReader(path).use { reader ->
-                RunScript.execute(conn, reader)
-            }
-        }
-    } finally {
-        conn?.close()
-    }
+    this.deployVerticle(verticleProvider(injector), ctx.asyncAssertSuccess())
 }
