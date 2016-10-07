@@ -9,7 +9,7 @@ import javax.inject.Singleton
  *
  * Created by maxiaojun on 10/6/16.
  */
-class TestExerciseCommandsModule : AbstractModule() {
+class ExerciseCommandsTestModule : AbstractModule() {
     override fun configure() {
     }
 

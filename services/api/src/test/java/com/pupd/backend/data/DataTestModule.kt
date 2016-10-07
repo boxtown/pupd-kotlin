@@ -3,9 +3,9 @@ package com.pupd.backend.data
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.pupd.backend.data.commands.CommandBus
 import com.pupd.backend.data.commands.DefaultCommandBus
-import com.pupd.backend.data.commands.TestExerciseCommandsModule
-import com.pupd.backend.data.queries.TestExerciseQueriesModule
-import com.pupd.backend.data.queries.TestWorkoutQueriesModule
+import com.pupd.backend.data.commands.ExerciseCommandsTestModule
+import com.pupd.backend.data.queries.ExerciseQueriesTestModule
+import com.pupd.backend.data.queries.WorkoutQueriesTestModule
 import javax.inject.Singleton
 
 /**
@@ -13,11 +13,11 @@ import javax.inject.Singleton
  *
  * Created by maxiaojun on 9/12/16.
  */
-class TestDataModule(mapper: ObjectMapper) : DataModule(mapper) {
+class DataTestModule(mapper: ObjectMapper) : DataModule(mapper) {
     override fun configure() {
-        install(TestExerciseCommandsModule())
-        install(TestExerciseQueriesModule())
-        install(TestWorkoutQueriesModule())
+        install(ExerciseCommandsTestModule())
+        install(ExerciseQueriesTestModule())
+        install(WorkoutQueriesTestModule())
 
         bind(CommandBus::class.java).to(DefaultCommandBus::class.java).`in`(Singleton::class.java)
     }

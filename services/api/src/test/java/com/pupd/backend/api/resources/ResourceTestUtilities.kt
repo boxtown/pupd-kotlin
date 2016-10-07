@@ -24,6 +24,6 @@ import javax.sql.DataSource
  * @param verticleProvider Provides a verticle given a Guice injector for dependencies
  */
 internal fun Vertx.deployTestEnvironment(ctx: TestContext, verticleProvider: (Injector) -> AbstractVerticle) {
-    val injector = Guice.createInjector(TestResourceModule(this))
+    val injector = Guice.createInjector(ResourceTestModule(this))
     this.deployVerticle(verticleProvider(injector), ctx.asyncAssertSuccess())
 }

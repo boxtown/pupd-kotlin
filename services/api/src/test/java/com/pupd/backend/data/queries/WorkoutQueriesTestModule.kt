@@ -14,7 +14,7 @@ import javax.inject.Singleton
  *
  * Created by maxiaojun on 10/6/16.
  */
-class TestWorkoutQueriesModule : AbstractModule() {
+class WorkoutQueriesTestModule : AbstractModule() {
     private val ids: Array<UUID> = arrayOf(
             UUID.fromString("00000000-0000-4000-8000-000000000001"),
             UUID.fromString("00000000-0000-4000-8000-000000000002"),
