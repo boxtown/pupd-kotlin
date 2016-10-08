@@ -1,5 +1,17 @@
 package com.pupd.backend.data.queries
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.pupd.backend.data.Database
+import com.pupd.backend.data.entities.Exercise
+import com.pupd.backend.data.entities.Workout
+import com.pupd.backend.data.entities.WorkoutExercise
+import com.pupd.backend.data.entities.WorkoutSet
+import com.pupd.backend.data.generated.Tables
+import com.pupd.backend.data.generated.tables.records.ExercisesRecord
+import com.pupd.backend.data.generated.tables.records.WorkoutExercisesRecord
+import javax.inject.Inject
+
 /**
  * Query to list workouts
  *
@@ -7,31 +19,38 @@ package com.pupd.backend.data.queries
  */
 data class ListWorkouts(val options: ListOptions)
 
-/*
-class ListWorkoutsHandler @Inject constructor(private val db: Database) :
+/**
+ * Query handler for list workouts query
+ *
+ * Created by maxiaojun on 10/7/16
+ */
+class ListWorkoutsHandler @Inject constructor(private val db: Database, private val mapper: ObjectMapper) :
         QueryHandler<ListWorkouts, Iterable<Workout>> {
 
-    override fun handle(query: ListWorkouts): Iterable<Workout> {
-        db.query { ctx ->
-            val field = Tables.WORKOUTS.field(query.options.sort)
-            val sqlQuery = ctx.selectFrom(Tables.WORKOUTS).query
+    override fun handle(query: ListWorkouts): Iterable<Workout> =
+            db.query { ctx ->
+                val setsRef = object : TypeReference<List<WorkoutSet>>() {}
+                val workouts = ctx.selectFrom(Tables.WORKOUTS).fetch().into(Workout::class.java)
+                val ids = workouts.map { workout -> workout.id }
+                val exercises = ctx.select()
+                        .from(Tables.WORKOUT_EXERCISES)
+                        .join(Tables.EXERCISES).onKey()
+                        .where(Tables.WORKOUT_EXERCISES.WORKOUT_ID.`in`(ids))
+                        .fetch()
+                        .groupBy { record -> record.get(Tables.WORKOUT_EXERCISES.WORKOUT_ID) }
 
-            when {
-                query.options.desc -> sqlQuery.addOrderBy(field?.desc() ?: Tables.WORKOUTS.ID.desc())
-                else -> sqlQuery.addOrderBy(field?.asc() ?: Tables.WORKOUTS.ID.asc())
+                workouts.forEach { workout ->
+                    val records = exercises[workout.id]
+                    workout.exercises = records?.map { r ->
+                        r.into(ExercisesRecord::class.java) to r.into(WorkoutExercisesRecord::class.java)
+                    }?.associateBy({ pair -> pair.first.id }, { pair ->
+                        WorkoutExercise(
+                                pair.first.into(Exercise::class.java),
+                                mapper.readValue(pair.second.sets, setsRef),
+                                pair.second.incr
+                        )
+                    }) ?: workout.exercises
+                }
+                workouts
             }
-
-            val offset = if (query.options.offset < 0) 0 else query.options.offset
-            when {
-                query.options.limit > 0 -> sqlQuery.addLimit(offset, query.options.limit)
-                else -> sqlQuery.addOffset(offset)
-            }
-            val workouts = sqlQuery.fetch().into(Workout::class.java)
-            val workoutIds = workouts.map { w -> w.id }
-            ctx.selectFrom(Tables.WORKOUT_EXERCISES)
-                    .where(Tables.WORKOUT_EXERCISES.WORKOUT_ID.`in`(workoutIds))
-                    .fetch()
-                    .groupBy { record -> record.workoutId }
-        }
-    }
-} */
+}
