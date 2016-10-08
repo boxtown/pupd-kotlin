@@ -75,10 +75,20 @@ class WorkoutQueriesTest {
     @Test
     fun testListWorkoutsWithNoArguments() {
         val query = ListWorkouts(ListOptions())
-        val result = ListWorkoutsHandler(database, mapper).handle(query).toList()
-        assertThat(result.size, `is`(3))
+        val results = ListWorkoutsHandler(database, mapper).handle(query).toList()
+        assertThat(results.size, `is`(3))
         workouts.forEachIndexed { i, workout ->
-            assertThat(workout, equalTo(result[i]))
+            assertThat(workout, equalTo(results[i]))
+        }
+    }
+
+    @Test
+    fun testListWorkoutsWithOffset() {
+        val query = ListWorkouts(ListOptions(offset = 1))
+        val results = ListWorkoutsHandler(database, mapper).handle(query).toList()
+        assertThat(results.size, `is`(2))
+        workouts.drop(1).forEachIndexed { i, workout ->
+            assertThat(workout, equalTo(results[i]))
         }
     }
 }

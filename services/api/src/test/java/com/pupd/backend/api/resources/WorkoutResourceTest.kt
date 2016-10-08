@@ -27,6 +27,32 @@ class WorkoutResourceTest {
     private lateinit var vertx: Vertx
     private lateinit var client: HttpClient
 
+    private val ids: Array<UUID> = arrayOf(
+            UUID.fromString("00000000-0000-4000-8000-000000000001"),
+            UUID.fromString("00000000-0000-4000-8000-000000000002"),
+            UUID.fromString("00000000-0000-4000-8000-000000000003")
+    )
+    private val workouts: Array<Workout> = arrayOf(
+            Workout(ids[0], "Test Workout A", mapOf(
+                    ids[0] to WorkoutExercise(Exercise(ids[0], "Test Exercise A"), listOf(
+                            WorkoutSet(5, 85.0),
+                            WorkoutSet(5, 95.0),
+                            WorkoutSet(5, 100.0)
+                    ), 5.0),
+                    ids[1] to WorkoutExercise(Exercise(ids[1], "Test Exercise C"), listOf(
+                            WorkoutSet(5, 65.0)
+                    ), 10.0)
+            )),
+            Workout(ids[1], "Test Workout C"),
+            Workout(ids[2], "Test Workout B", mapOf(
+                    ids[2] to WorkoutExercise(Exercise(ids[2], "Test Exercise B"), listOf(
+                            WorkoutSet(5, 100.0),
+                            WorkoutSet(5, 100.0),
+                            WorkoutSet(5, 100.0)
+                    ), 3.0)
+            ))
+    )
+
     @Before
     fun setUp(ctx: TestContext) {
         vertx = Vertx.vertx()
@@ -41,11 +67,6 @@ class WorkoutResourceTest {
 
     @Test
     fun testGetWorkout(ctx: TestContext) {
-        val ids = arrayOf(
-                UUID.fromString("00000000-0000-4000-8000-000000000001"),
-                UUID.fromString("00000000-0000-4000-8000-000000000002")
-        )
-
         val async = ctx.async()
         client.doGet<Unit> {
             uri {
@@ -55,29 +76,8 @@ class WorkoutResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 200)
                 resp.bodyHandler { body ->
-                    val check = Workout(
-                            ids[0],
-                            "Test Workout A",
-                            mapOf(
-                                    ids[0] to WorkoutExercise(
-                                            Exercise(ids[0], "Test Exercise A"),
-                                            listOf(
-                                                    WorkoutSet(5, 85.0),
-                                                    WorkoutSet(5, 95.0),
-                                                    WorkoutSet(5, 100.0)
-                                            ),
-                                            5.0
-                                    ),
-                                    ids[1] to WorkoutExercise(
-                                            Exercise(ids[1], "Test Exercise C"),
-                                            listOf(
-                                                    WorkoutSet(5, 65.0)
-                                            ),
-                                            10.0
-                                    )
-                            ))
                     val workout = Json.decodeValue(body.toString(), Workout::class.java)
-                    ctx.assertEquals(workout, check)
+                    ctx.assertEquals(workout, workouts[0])
                 }
             }
             errorHandler { t -> ctx.fail(t) }

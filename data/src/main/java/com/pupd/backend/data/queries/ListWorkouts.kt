@@ -30,7 +30,15 @@ class ListWorkoutsHandler @Inject constructor(private val db: Database, private 
     override fun handle(query: ListWorkouts): Iterable<Workout> =
             db.query { ctx ->
                 val setsRef = object : TypeReference<List<WorkoutSet>>() {}
-                val workouts = ctx.selectFrom(Tables.WORKOUTS).fetch().into(Workout::class.java)
+                val sqlQuery = ctx.selectFrom(Tables.WORKOUTS)
+
+                val offset = if (query.options.offset > 0) query.options.offset else 0
+                when {
+                    query.options.limit > 0 -> sqlQuery.offset(offset)
+                    else -> sqlQuery.limit(offset, query.options.limit)
+                }
+
+                val workouts = sqlQuery.fetch().into(Workout::class.java)
                 val ids = workouts.map { workout -> workout.id }
                 val exercises = ctx.select()
                         .from(Tables.WORKOUT_EXERCISES)
