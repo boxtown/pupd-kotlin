@@ -1,7 +1,10 @@
 package com.pupd.backend.api.resources
 
 import com.pupd.backend.api.ApiVerticle
+import com.pupd.backend.data.entities.Exercise
 import com.pupd.backend.data.entities.Workout
+import com.pupd.backend.data.entities.WorkoutExercise
+import com.pupd.backend.data.entities.WorkoutSet
 import com.pupd.backend.shared.vertx.doGet
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpClient
@@ -38,6 +41,11 @@ class WorkoutResourceTest {
 
     @Test
     fun testGetWorkout(ctx: TestContext) {
+        val ids = arrayOf(
+                UUID.fromString("00000000-0000-4000-8000-000000000001"),
+                UUID.fromString("00000000-0000-4000-8000-000000000002")
+        )
+
         val async = ctx.async()
         client.doGet<Unit> {
             uri {
@@ -47,28 +55,29 @@ class WorkoutResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 200)
                 resp.bodyHandler { body ->
+                    val check = Workout(
+                            ids[0],
+                            "Test Workout A",
+                            mapOf(
+                                    ids[0] to WorkoutExercise(
+                                            Exercise(ids[0], "Test Exercise A"),
+                                            listOf(
+                                                    WorkoutSet(5, 85.0),
+                                                    WorkoutSet(5, 95.0),
+                                                    WorkoutSet(5, 100.0)
+                                            ),
+                                            5.0
+                                    ),
+                                    ids[1] to WorkoutExercise(
+                                            Exercise(ids[1], "Test Exercise C"),
+                                            listOf(
+                                                    WorkoutSet(5, 65.0)
+                                            ),
+                                            10.0
+                                    )
+                            ))
                     val workout = Json.decodeValue(body.toString(), Workout::class.java)
-                    ctx.assertEquals(workout.name, "Test Workout A")
-                    ctx.assertEquals(workout.exercises.size, 2)
-
-                    var exercise = workout.exercises[UUID.fromString("00000000-0000-4000-8000-000000000001")]
-                    ctx.assertEquals(exercise?.exercise?.name, "Test Exercise A")
-                    ctx.assertEquals(exercise?.sets?.size, 3)
-                    arrayOf(5 to 85.0, 5 to 95.0, 5 to 100.0).forEachIndexed { i, pair ->
-                        val set = exercise?.sets?.get(i)
-                        ctx.assertEquals(set?.reps, pair.first)
-                        ctx.assertEquals(set?.weight, pair.second)
-                    }
-                    ctx.assertEquals(exercise?.increment, 5.0)
-
-
-                    exercise = workout.exercises[UUID.fromString("00000000-0000-4000-8000-000000000002")]
-                    ctx.assertEquals(exercise?.exercise?.name, "Test Exercise C")
-                    ctx.assertEquals(exercise?.sets?.size, 1)
-                    val set = exercise?.sets?.first()
-                    ctx.assertEquals(set?.reps, 5)
-                    ctx.assertEquals(set?.weight, 65.0)
-                    ctx.assertEquals(exercise?.increment, 10.0)
+                    ctx.assertEquals(workout, check)
                 }
             }
             errorHandler { t -> ctx.fail(t) }

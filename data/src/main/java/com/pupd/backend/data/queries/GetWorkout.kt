@@ -36,14 +36,14 @@ class GetWorkoutHandler @Inject constructor(private val db: Database, private va
                     .where(Tables.WORKOUT_EXERCISES.WORKOUT_ID.equal(query.id))
                     .fetch()
                     .map { record ->
-                        record.into(WorkoutExercisesRecord::class.java) to record.into(ExercisesRecord::class.java)
+                        record.into(ExercisesRecord::class.java) to record.into(WorkoutExercisesRecord::class.java)
                     }
                     .forEach { pair ->
                         val typeRef = object : TypeReference<List<WorkoutSet>>() {}
-                        exercises.put(pair.first.exerciseId, WorkoutExercise(
-                                pair.second.into(Exercise::class.java),
-                                mapper.readValue(pair.first.sets, typeRef),
-                                pair.first.incr
+                        exercises.put(pair.first.id, WorkoutExercise(
+                                pair.first.into(Exercise::class.java),
+                                mapper.readValue(pair.second.sets, typeRef),
+                                pair.second.incr
                         ))
                     }
 
