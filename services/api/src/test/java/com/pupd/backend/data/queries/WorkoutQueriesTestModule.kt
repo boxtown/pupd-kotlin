@@ -51,4 +51,37 @@ class WorkoutQueriesTestModule : AbstractModule() {
             object : QueryHandler<GetWorkout, Workout?> {
                 override fun handle(query: GetWorkout): Workout? = dataSource[query.id]
             }
+
+    @Suppress("UNUSED")
+    @Singleton
+    @Provides
+    fun listWorkoutsHandler(): QueryHandler<ListWorkouts, Iterable<Workout>> =
+            object : QueryHandler<ListWorkouts, Iterable<Workout>> {
+                override fun handle(query: ListWorkouts): Iterable<Workout> {
+                    var it = dataSource.values.asIterable()
+                    when (query.options.sort) {
+                        "name" -> {
+                            it = if (query.options.desc) {
+                                it.sortedByDescending { e -> e.name }
+                            } else {
+                                it.sortedBy { e -> e.name }
+                            }
+                        }
+                        else -> {
+                            it = if (query.options.desc) {
+                                it.reversed()
+                            } else {
+                                it
+                            }
+                        }
+                    }
+                    if (query.options.offset > 0) {
+                        it = it.drop(query.options.offset)
+                    }
+                    if (query.options.limit > 0) {
+                        it = it.take(query.options.limit)
+                    }
+                    return it
+                }
+            }
 }
