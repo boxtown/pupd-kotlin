@@ -78,17 +78,16 @@ class WorkoutResourceTest {
                 resp.bodyHandler { body ->
                     val workout = Json.decodeValue(body.toString(), Workout::class.java)
                     ctx.assertEquals(workout, workouts[0])
+                    async.complete()
                 }
             }
             errorHandler { t -> ctx.fail(t) }
-        }.thenRun {
-            async.complete()
         }
     }
 
     @Test
     fun testListWorkoutsWithNoArguments(ctx: TestContext) {
-        val async = ctx.async();
+        val async = ctx.async()
         client.doGet<Unit> {
             uri {
                 path("workouts")
@@ -104,11 +103,130 @@ class WorkoutResourceTest {
                             .forEachIndexed { i, s ->
                                 ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
                             }
+                    async.complete()
                 }
             }
             errorHandler { t -> ctx.fail(t) }
-        }.thenRun {
-            async.complete()
+        }
+    }
+
+    @Test
+    fun testListWorkoutsWithOffset(ctx: TestContext) {
+        val async = ctx.async()
+        client.doGet<Unit> {
+            uri {
+                path("workouts")
+                query("offset" to "1")
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 200)
+                resp.bodyHandler { body ->
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 2)
+                    arrayOf("Test Workout C", "Test Workout B").forEachIndexed { i, s ->
+                        ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
+                    }
+                    async.complete()
+                }
+            }
+            errorHandler { t -> ctx.fail(t) }
+        }
+    }
+
+    @Test
+    fun testListWorkoutsWithLimit(ctx: TestContext) {
+        val async = ctx.async()
+        client.doGet<Unit> {
+            uri {
+                path("workouts")
+                query("limit" to "1")
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 200)
+                resp.bodyHandler { body ->
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 1)
+                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Workout A")
+                    async.complete()
+                }
+            }
+            errorHandler { t -> ctx.fail(t) }
+        }
+    }
+
+    @Test
+    fun testListWorkoutsWithSorting(ctx: TestContext) {
+        val async = ctx.async()
+        client.doGet<Unit> {
+            uri {
+                path("workouts")
+                query("sort" to "name")
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 200)
+                resp.bodyHandler { body ->
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 3)
+                    arrayOf("Test Workout A",
+                            "Test Workout B",
+                            "Test Workout C")
+                            .forEachIndexed { i, s ->
+                                ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
+                            }
+                    async.complete()
+                }
+            }
+            errorHandler { t -> ctx.fail(t) }
+        }
+    }
+
+    @Test
+    fun testListWorkoutsInDescendingOrder(ctx: TestContext) {
+        val async = ctx.async()
+        client.doGet<Unit> {
+            uri {
+                path("workouts")
+                query("desc" to "true")
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 200)
+                resp.bodyHandler { body ->
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 3)
+                    arrayOf("Test Workout B",
+                            "Test Workout C",
+                            "Test Workout A")
+                            .forEachIndexed { i, s ->
+                                ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
+                            }
+                    async.complete()
+                }
+            }
+            errorHandler { t -> ctx.fail(t) }
+        }
+    }
+
+    @Test
+    fun testListWorkouts(ctx: TestContext) {
+        val async = ctx.async()
+        client.doGet<Unit> {
+            uri {
+                path("workouts")
+                query("sort" to "name")
+                query("desc" to "true")
+                query("offset" to 1)
+                query("limit" to 1)
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 200)
+                resp.bodyHandler { body ->
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 1)
+                    ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Workout B")
+                    async.complete()
+                }
+            }
+            errorHandler { t -> ctx.fail(t) }
         }
     }
 }

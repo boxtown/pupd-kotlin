@@ -48,13 +48,12 @@ class ExerciseResourceTest {
                 resp.bodyHandler { body ->
                     val exercise = Json.decodeValue(body.toString(), Exercise::class.java)
                     ctx.assertEquals(exercise?.name, "Test Exercise A")
+                    async.complete()
                 }
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -68,9 +67,8 @@ class ExerciseResourceTest {
             }
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 404)
+                async.complete()
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -92,13 +90,12 @@ class ExerciseResourceTest {
                             .forEachIndexed { i, s ->
                                 ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
                             }
+                    async.complete()
                 }
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -118,13 +115,12 @@ class ExerciseResourceTest {
                     arrayOf("Test Exercise C", "Test Exercise B").forEachIndexed { i, s ->
                         ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
                     }
+                    async.complete()
                 }
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -142,13 +138,12 @@ class ExerciseResourceTest {
                     val array = body.toJsonArray()
                     ctx.assertEquals(array.size(), 1)
                     ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise A")
+                    async.complete()
                 }
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -171,13 +166,12 @@ class ExerciseResourceTest {
                     .forEachIndexed { i, s ->
                         ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
                     }
+                    async.complete()
                 }
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -200,13 +194,12 @@ class ExerciseResourceTest {
                             .forEachIndexed { i, s ->
                                 ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
                             }
+                    async.complete()
                 }
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -227,20 +220,19 @@ class ExerciseResourceTest {
                     val array = body.toJsonArray()
                     ctx.assertEquals(array.size(), 1)
                     ctx.assertEquals(array.getJsonObject(0).getString("name"), "Test Exercise B")
+                    async.complete()
                 }
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
     @Test
     fun testCreateExercise(ctx: TestContext) {
         val async = ctx.async()
-        client.doPost<String> {
+        client.doPost<Unit> {
             uri {
                 path("exercise")
             }
@@ -253,13 +245,11 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 201)
                 ctx.assertTrue(resp.headers()["location"].length > 0)
-                resp.headers()["location"].substringAfterLast('/')
+                async.complete()
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -276,12 +266,11 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 400)
                 // TODO: check error code body
+                async.complete()
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -301,12 +290,11 @@ class ExerciseResourceTest {
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 400)
                 // TODO: check error code body
+                async.complete()
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -326,12 +314,11 @@ class ExerciseResourceTest {
             }
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 202)
+                async.complete()
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -351,12 +338,11 @@ class ExerciseResourceTest {
             }
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 202)
+                async.complete()
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -376,12 +362,11 @@ class ExerciseResourceTest {
             }
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 400)
+                async.complete()
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -395,12 +380,11 @@ class ExerciseResourceTest {
             }
             handler { resp ->
                 ctx.assertEquals(resp.statusCode(), 202)
+                async.complete()
             }
             errorHandler { t ->
                 ctx.fail(t)
             }
-        }.thenRun {
-            async.complete()
         }
     }
 
@@ -423,13 +407,12 @@ class ExerciseResourceTest {
                 }
                 handler { resp ->
                     ctx.assertEquals(resp.statusCode(), 202)
+                    async.complete()
                 }
                 errorHandler { t ->
                     ctx.fail(t)
                 }
             }
-        }.thenRun {
-            async.complete()
         }
     }
 }
