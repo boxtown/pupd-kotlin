@@ -85,4 +85,30 @@ class WorkoutResourceTest {
             async.complete()
         }
     }
+
+    @Test
+    fun testListWorkoutsWithNoArguments(ctx: TestContext) {
+        val async = ctx.async();
+        client.doGet<Unit> {
+            uri {
+                path("workouts")
+            }
+            handler { resp ->
+                ctx.assertEquals(resp.statusCode(), 200)
+                resp.bodyHandler { body ->
+                    val array = body.toJsonArray()
+                    ctx.assertEquals(array.size(), 3)
+                    arrayOf("Test Workout A",
+                            "Test Workout C",
+                            "Test Workout B")
+                            .forEachIndexed { i, s ->
+                                ctx.assertEquals(array.getJsonObject(i).getString("name"), s)
+                            }
+                }
+            }
+            errorHandler { t -> ctx.fail(t) }
+        }.thenRun {
+            async.complete()
+        }
+    }
 }

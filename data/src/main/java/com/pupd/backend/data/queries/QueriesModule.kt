@@ -33,4 +33,10 @@ class QueriesModule() : AbstractModule() {
     @Inject
     fun getWorkoutHandler(db: Database, mapper: ObjectMapper): QueryHandler<GetWorkout, Workout?>
             = GetWorkoutHandler(db, mapper)
+
+    @Singleton
+    @Provides
+    @Inject
+    fun listWorkoutsHandler(db: Database, mapper: ObjectMapper): QueryHandler<ListWorkouts, Iterable<Workout>>
+            = ListWorkoutsHandler(db, mapper)
 }
