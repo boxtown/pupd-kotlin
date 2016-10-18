@@ -42,67 +42,67 @@ class ExerciseQueriesTest {
     @Test
     fun testListExercisesWithNoArguments() {
         val query = ListExercises(ListOptions())
-        val result = ListExercisesHandler(database).handle(query).toList()
-        assertThat(result.size, `is`(3))
+        val results = ListExercisesHandler(database).handle(query).toList()
+        assertThat(results.size, `is`(3))
         arrayOf("Test Exercise A",
                 "Test Exercise C",
                 "Test Exercise B")
                 .forEachIndexed { i, s ->
-                    assertThat(result[i].name, `is`(s))
+                    assertThat(results[i].name, `is`(s))
                 }
     }
 
     @Test
     fun testListExercisesWithOffset() {
         val query = ListExercises(ListOptions(offset = 1))
-        val result = ListExercisesHandler(database).handle(query).toList()
-        assertThat(result.size, `is`(2))
+        val results = ListExercisesHandler(database).handle(query).toList()
+        assertThat(results.size, `is`(2))
         arrayOf("Test Exercise C",
                 "Test Exercise B")
                 .forEachIndexed { i, s ->
-                    assertThat(result[i].name, `is`(s))
+                    assertThat(results[i].name, `is`(s))
                 }
     }
 
     @Test
     fun testListExercisesWithLimit() {
         val query = ListExercises(ListOptions(limit = 1))
-        val result = ListExercisesHandler(database).handle(query).toList()
-        assertThat(result.size, `is`(1))
-        assertThat(result[0].name, `is`("Test Exercise A"))
+        val results = ListExercisesHandler(database).handle(query).toList()
+        assertThat(results.size, `is`(1))
+        assertThat(results[0].name, `is`("Test Exercise A"))
     }
 
     @Test
     fun testListExercisesWithSorting() {
         val query = ListExercises(ListOptions(sort = "name"))
-        val result = ListExercisesHandler(database).handle(query).toList()
-        assertThat(result.size, `is`(3))
+        val results = ListExercisesHandler(database).handle(query).toList()
+        assertThat(results.size, `is`(3))
         arrayOf("Test Exercise A",
                 "Test Exercise B",
                 "Test Exercise C")
                 .forEachIndexed { i, s ->
-                    assertThat(result[i].name, `is`(s))
+                    assertThat(results[i].name, `is`(s))
                 }
     }
 
     @Test
     fun testListExercisesInDescendingOrder() {
         val query = ListExercises(ListOptions(desc = true))
-        val result = ListExercisesHandler(database).handle(query).toList()
-        assertThat(result.size, `is`(3))
+        val results = ListExercisesHandler(database).handle(query).toList()
+        assertThat(results.size, `is`(3))
         arrayOf("Test Exercise C",
                 "Test Exercise B",
                 "Test Exercise A")
                 .forEachIndexed { i, s ->
-                    assertThat(result[i].name, `is`(s))
+                    assertThat(results[i].name, `is`(s))
                 }
     }
 
     @Test
     fun testListExercises() {
         val query = ListExercises(ListOptions(offset = 1, limit = 1, sort = "name", desc = true))
-        val result = ListExercisesHandler(database).handle(query).toList()
-        assertThat(result.size, `is`(1))
-        assertThat(result[0].name, `is`("Test Exercise B"))
+        val results = ListExercisesHandler(database).handle(query).toList()
+        assertThat(results.size, `is`(1))
+        assertThat(results[0].name, `is`("Test Exercise B"))
     }
 }

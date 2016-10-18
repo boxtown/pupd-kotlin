@@ -29,13 +29,19 @@ class ListWorkoutsHandler @Inject constructor(private val db: Database, private 
 
     override fun handle(query: ListWorkouts): Iterable<Workout> =
             db.query { ctx ->
+                var field = Tables.WORKOUTS.field(query.options.sort)
                 val setsRef = object : TypeReference<List<WorkoutSet>>() {}
-                val sqlQuery = ctx.selectFrom(Tables.WORKOUTS)
+                val sqlQuery = ctx.selectFrom(Tables.WORKOUTS).query
+
+                when {
+                    query.options.desc -> sqlQuery.addOrderBy(field.desc() ?: Tables.WORKOUTS.ID.desc())
+                    else -> sqlQuery.addOrderBy(field.asc() ?: Tables.WORKOUTS.ID.asc())
+                }
 
                 val offset = if (query.options.offset > 0) query.options.offset else 0
                 when {
-                    query.options.limit > 0 -> sqlQuery.offset(offset)
-                    else -> sqlQuery.limit(offset, query.options.limit)
+                    query.options.limit > 0 -> sqlQuery.addLimit(offset, query.options.limit)
+                    else -> sqlQuery.addOffset(offset)
                 }
 
                 val workouts = sqlQuery.fetch().into(Workout::class.java)

@@ -91,4 +91,46 @@ class WorkoutQueriesTest {
             assertThat(workout, equalTo(results[i]))
         }
     }
+
+    @Test
+    fun testListWorkoutsWithLimit() {
+        val query = ListWorkouts(ListOptions(limit = 1))
+        val results = ListWorkoutsHandler(database, mapper).handle(query).toList()
+        assertThat(results.size, `is`(1))
+        assertThat(workouts[0], equalTo(results[0]))
+    }
+
+    @Test
+    fun testListWorkoutsWithSorting() {
+        val query = ListWorkouts(ListOptions(sort = "name"))
+        val results = ListWorkoutsHandler(database, mapper).handle(query).toList()
+        assertThat(results.size, `is`(3))
+        arrayOf("Test Workout A",
+                "Test Workout B",
+                "Test Workout C")
+                .forEachIndexed { i, s ->
+                    assertThat(results[i].name, `is`(s))
+                }
+    }
+
+    @Test
+    fun testListWorkoutsInDescendingOrder() {
+        val query = ListWorkouts(ListOptions(desc = true))
+        val results = ListWorkoutsHandler(database, mapper).handle(query).toList()
+        assertThat(results.size, `is`(3))
+        arrayOf("Test Workout B",
+                "Test Workout C",
+                "Test Workout A")
+                .forEachIndexed { i, s ->
+                    assertThat(results[i].name, `is`(s))
+                }
+    }
+
+    @Test
+    fun testListWorkouts() {
+        val query = ListWorkouts(ListOptions(offset = 1, limit = 1, sort = "name", desc = true))
+        val results = ListWorkoutsHandler(database, mapper).handle(query).toList()
+        assertThat(results.size, `is`(1))
+        assertThat(results[0].name, `is`("Test Workout B"))
+    }
 }
